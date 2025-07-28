@@ -1,0 +1,27 @@
+.wrapper-link {
+    width: 90%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 15px;
+    color: black;
+    border-radius: 8px;
+    text-decoration: none;
+
+    &:hover {
+        background-color: rgba(199, 199, 199, 0.2);
+    }
+
+    &.active {
+        color: white;
+        background-image: linear-gradient(198deg, var(--primary-button-gradient-one), var(--primary-button-gradient-two));
+    }
+}
+
+.title {
+    font-size: 1.6rem;
+    text-align: left;
+    width: 60%;
+}
+

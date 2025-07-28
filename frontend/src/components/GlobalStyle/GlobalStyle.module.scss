@@ -1,0 +1,26 @@
+@import 'normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    // global variable css
+    --primary-background: #f5f5f5;
+    --sidebar-background: #ffffff;
+    --primary-button-gradient-one:#42424a;
+    --primary-button-gradient-two:#191919;
+    --primary-column-receive-warehouse: #4baf4f;
+    --primary-column-exist-warehouse:#2fa1ed;
+    --primary-column-release-warehouse: #fdcd55;
+    --max-width-sidebar: 230px;
+    --max-height-sidebar-content: 680px;
+    --max-height-header: 70px;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    overflow-x: hidden;
+    background-color: var(--primary-background);
+}
