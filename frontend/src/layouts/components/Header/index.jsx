@@ -4,6 +4,7 @@ import styles from './Header.module.scss';
 import { useLocation } from 'react-router-dom';
 import { CircleUserRound, UserCircle2, LogOut, Bell } from 'lucide-react';
 import { Menu, Notification } from '@/components';
+import { Search } from '@/components';
 
 const cx = classNames.bind(styles);
 
@@ -42,6 +43,7 @@ const Header = ({ children }) => {
             </div>
             {children}
             <div className={cx('right-header')}>
+                <Search />
                 <div>
                     <Notification>
                         <Bell size={26} />
