@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-export default function index({
+export default function Button({
     to,
     href,
     primary = false,
