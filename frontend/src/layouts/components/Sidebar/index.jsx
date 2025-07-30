@@ -73,7 +73,7 @@ const Sidebar = () => {
          {
             title: 'Quản lý hàng lỗi',
             iconName: ShieldX,
-            path: '/ware-transfer',
+            path: '/product-error',
         },
         {
             title: 'Chuyển kho',
@@ -83,7 +83,7 @@ const Sidebar = () => {
         {
             title: 'Quản lý kho',
             iconName: Warehouse,
-            path: '/settings',
+            path: '/manage-warehouse',
         },
     ];
 
