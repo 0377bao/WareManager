@@ -12,6 +12,11 @@ import {
     ClipboardMinus,
     Undo2,
     CalendarCheck,
+    Truck,
+    Warehouse,
+    Factory,
+    ShieldX,
+    Info
 } from 'lucide-react';
 import logo from '../../../assets/logo.png';
 import { useLocation } from 'react-router-dom';
@@ -56,24 +61,47 @@ const Sidebar = () => {
             path: '/return-order',
         },
         {
-            title: 'Phân quyền',
+            title: 'Nhân sự',
             iconName: User,
             path: '/auth',
         },
+         {
+            title: 'Nhà cung cấp',
+            iconName: Factory,
+            path: '/supplier',
+        },
+         {
+            title: 'Quản lý hàng lỗi',
+            iconName: ShieldX,
+            path: '/ware-transfer',
+        },
         {
-            title: 'Cài đặt',
-            iconName: Settings,
+            title: 'Chuyển kho',
+            iconName: Truck,
+            path: '/ware-transfer',
+        },
+        {
+            title: 'Quản lý kho',
+            iconName: Warehouse,
             path: '/settings',
         },
     ];
 
     let location = useLocation();
+    const warehouseName = "HT WareSoft"
+
+    const showInfoWarehouse = () => {
+
+    }
     return (
         <div className={cx('wrapper-sidebar')}>
             <div className={cx('sidebar-content')}>
                 <div className={cx('info-user')}>
                     <img src={logo} className={cx('logo-sidebar')} loading="lazy" />
-                    <h1 className={cx('username')}>Nguyen Van Minh</h1>
+                    <div className={cx('ware-brand')}>
+                         <h1 className={cx('username')}>{warehouseName}</h1>
+                         <Info className={cx('icon')} size={19} onClick={showInfoWarehouse}/>
+                    </div>
                 </div>
                 <div className={cx('sidebar-list')}>
                     {sidebarMenu.map((item, index) => (

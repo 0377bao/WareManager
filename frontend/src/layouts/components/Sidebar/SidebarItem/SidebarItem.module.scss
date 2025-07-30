@@ -10,7 +10,7 @@
     text-decoration: none;
 
     &:hover {
-        background-color: rgba(199, 199, 199, 0.2);
+        background-color: var(--primary-hover-background);
     }
 
     &.active {
