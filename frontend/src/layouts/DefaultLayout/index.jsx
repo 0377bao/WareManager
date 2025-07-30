@@ -22,7 +22,8 @@ const DefaultLayout = ({ children }) => {
             <ChatBox classnames={'show'} isOpen={showChatBox} />
 
             <button className={cx('btn-show-chat-box')} onClick={() => setShowChatBox((prev) => !prev)}>
-                <Bot size={30} />
+                <Bot size={30} color={'white'}/>
+                <p className={cx('title-chat-box')}>Trợ lý</p>
             </button>
         </div>
     );
