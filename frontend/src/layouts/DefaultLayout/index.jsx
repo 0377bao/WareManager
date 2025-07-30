@@ -1,24 +1,31 @@
-import React from 'react';
-import classNames from "classnames/bind"
-import styles from "./DefaultLayout.module.scss"
+import React, { useState } from 'react';
+import classNames from 'classnames/bind';
+import styles from './DefaultLayout.module.scss';
 import { Sidebar } from '../components';
 import Header from '../components/Header';
 import PageLayout from '../PageLayout';
+import { Bot } from 'lucide-react';
+import { ChatBox } from '@/components';
 
-const cx = classNames.bind(styles)
+const cx = classNames.bind(styles);
 
-const DefaultLayout = ({children}) => {
+const DefaultLayout = ({ children }) => {
+    const [showChatBox, setShowChatBox] = useState(false);
     return (
         <div className={cx('wrapper-layout')}>
-            <Header/>
-            <Sidebar/>
+            <Header />
+            <Sidebar />
             <div className={cx('container-content')}>
-                <PageLayout>
-                    {children}
-                </PageLayout>
+                <PageLayout>{children}</PageLayout>
             </div>
+
+            <ChatBox classnames={'show'} isOpen={showChatBox} />
+
+            <button className={cx('btn-show-chat-box')} onClick={() => setShowChatBox((prev) => !prev)}>
+                <Bot size={30} />
+            </button>
         </div>
     );
-}
+};
 
 export default DefaultLayout;
