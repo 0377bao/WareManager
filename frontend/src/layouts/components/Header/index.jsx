@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import { useLocation } from 'react-router-dom';
-import { CircleUserRound, UserCircle2, LogOut } from 'lucide-react';
-import { Menu } from '@/components';
+import { CircleUserRound, UserCircle2, LogOut, Bell } from 'lucide-react';
+import { Menu, Notification } from '@/components';
 
 const cx = classNames.bind(styles);
 
@@ -42,11 +42,18 @@ const Header = ({ children }) => {
             </div>
             {children}
             <div className={cx('right-header')}>
-                <p className={cx('title')}>Welcome Admin</p>
-                {/** avatar */}
-                <Menu menuItems={menuItems}>
-                    <CircleUserRound size={26} />
-                </Menu>
+                <div>
+                    <Notification>
+                        <Bell size={26} />
+                    </Notification>
+                </div>
+
+                <div>
+                    {/** avatar */}
+                    <Menu menuItems={menuItems}>
+                        <CircleUserRound size={26} />
+                    </Menu>
+                </div>
             </div>
         </div>
     );
