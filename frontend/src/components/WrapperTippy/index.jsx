@@ -7,7 +7,8 @@ const WrapperTippy = ({
     renderTooltip,
     delay=[0,200],
     offset=[-5,15],
-    placement="bottom-end"
+    placement="bottom-end",
+    ...pass
  }
 ) => {
     return (
@@ -17,7 +18,7 @@ const WrapperTippy = ({
             delay={delay}
             offset={offset}
             placement={placement}
-            
+            {...pass}
         >
             {children}
         </Tippy>
