@@ -13,10 +13,10 @@
 }
 
 .btn-show-chat-box {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #d9d9d9;
+    width: 150px;
+    height: 56px;
+    border-radius: 40px;
+    background-color: rgb(33,35,40);
     box-shadow: 0 0 8px rgba(0,0,0,.4);
     border: none;
     outline: none;
@@ -24,5 +24,19 @@
     bottom: 2vh;
     right: 15px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > .title-chat-box {
+        color: white;
+        font-size: 1.6rem;
+        margin-left: 10px;
+        font-weight: bold;
+    }
+
+    &:hover {
+        background-color: rgb(56, 57, 62);
+    }
 }
  

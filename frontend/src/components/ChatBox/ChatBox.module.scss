@@ -10,8 +10,8 @@
     padding: 5px;
     box-shadow: 0 2px 8px rgba(0,0,0,.2);
     transform: translateY(100%);
-    transition: 0.5s;
-    transition-timing-function: ease-in;
+    transition: 0.3s;
+    transition-timing-function: linear;
     
     &.show {
         visibility: visible;
