@@ -1,4 +1,4 @@
-import { AuthPage, CheckPage, Dashboard, ProductPage, ReceiveProductPage, ReleaseProductPage, ReportPage, ReturnProductPage } from "../pages";
+import { AuthPage, CheckPage, Dashboard, ProductPage, ReceiveProductPage, ReleaseProductPage, ReportPage, ReturnProductPage, Supplier, WarehousePage, WarehouseTransferPage, ProductErrorPage } from "../pages";
 
 const publicRoute = [
   {
@@ -33,6 +33,22 @@ const publicRoute = [
     page: AuthPage,
     path: "/auth",
   },
+  {
+    page: ProductErrorPage,
+    path: "/product-error"
+  },
+  {
+    page: Supplier,
+    path: '/supplier'
+  },
+  {
+    page: WarehousePage,
+    path: '/manage-warehouse'
+  },
+  {
+    page: WarehouseTransferPage,
+    path: '/ware-transfer'
+  }
 ];
 
 

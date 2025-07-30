@@ -18,7 +18,10 @@ const Header = ({ children }) => {
         '/report': 'Báo cáo',
         '/return-order': 'Đổi trả',
         '/auth': 'Phân quyền',
-        '/settings': 'Cài đặt',
+        '/product-error': 'Quản lý hàng lỗi',
+        '/supplier': "Nhà cung cấp",
+        '/ware-transfer': 'Chuyển kho',
+        '/manage-warehouse': 'Quản lý kho',
     };
 
     const menuItems = [
