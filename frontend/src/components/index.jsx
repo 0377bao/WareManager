@@ -3,6 +3,8 @@ import Icon from './Icon';
 import Button from './Button';
 import WrapperTippy from './WrapperTippy';
 import Menu from './Menu';
+import Image from './Image';
+import Notification from './Notification';
 
 export { 
     GlobalStyle, 
@@ -10,4 +12,6 @@ export {
     Button,
     WrapperTippy,
     Menu,
+    Image,
+    Notification
 };
