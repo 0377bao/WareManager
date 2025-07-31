@@ -8,5 +8,6 @@ import Notification from './Notification';
 import ChatBox from './ChatBox';
 import Search from './Search';
 import Popper from './Popper';
+import Input from './Input';
 
-export { GlobalStyle, Icon, Button, WrapperTippy, Menu, Image, Notification, ChatBox, Search, Popper };
+export { GlobalStyle, Icon, Button, WrapperTippy, Menu, Image, Notification, ChatBox, Search, Popper, Input };
