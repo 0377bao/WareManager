@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Routes, Route } from "react-router-dom";
 import { publicRoute } from "./routes";
 import DefaultLayout from "./layouts/DefaultLayout";
@@ -10,14 +10,16 @@ function App() {
       <Routes>
         {publicRoute.map((route, index) => {
           let Page = route.page;
+          let Layout = route.layout == null ? Fragment :  route.layout
+          
           return (
             <Route
               key={index}
               path={route.path}
               element={
-                <DefaultLayout>
+                <Layout>
                   <Page />
-                </DefaultLayout>
+                </Layout>
               }
             />
           );
