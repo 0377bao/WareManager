@@ -10,9 +10,9 @@ import { get } from '@/utils/httpRequest';
 import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
+const softwareName = import.meta.env.VITE_SOFTWARE_NAME;
 
 const Register = () => {
-    const softwareName = 'HT WareSoft';
     const [showPassword, setShowPassword] = useState(false);
     const [showRetypedPassword, setShowRetypedPassword] = useState(false);
     // react-hook-form trả về những biến này
