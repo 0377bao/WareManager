@@ -11,6 +11,7 @@ import WarehousePage from "./WarehousePage";
 import WarehouseTransferPage from "./WarehouseTransferPage"
 import ProductErrorPage from "./ProductErrorPage"
 import Login from "./Login";
+import Register from "./Register"
 
 export {
     Dashboard,
@@ -25,5 +26,6 @@ export {
     Supplier,
     WarehousePage,
     WarehouseTransferPage,
-    Login
+    Login,
+    Register
 }
