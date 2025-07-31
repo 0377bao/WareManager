@@ -16,7 +16,7 @@ import {
     Warehouse,
     Factory,
     ShieldX,
-    Info
+    Info,
 } from 'lucide-react';
 import logo from '../../../assets/logo.png';
 import { useLocation } from 'react-router-dom';
@@ -65,12 +65,12 @@ const Sidebar = () => {
             iconName: User,
             path: '/auth',
         },
-         {
+        {
             title: 'Nhà cung cấp',
             iconName: Factory,
             path: '/supplier',
         },
-         {
+        {
             title: 'Quản lý hàng lỗi',
             iconName: ShieldX,
             path: '/product-error',
@@ -88,19 +88,18 @@ const Sidebar = () => {
     ];
 
     let location = useLocation();
-    const warehouseName = "HT WareSoft"
+    const warehouseName = 'HT WareSoft';
 
-    const showInfoWarehouse = () => {
+    const showInfoWarehouse = () => {};
 
-    }
     return (
         <div className={cx('wrapper-sidebar')}>
             <div className={cx('sidebar-content')}>
                 <div className={cx('info-user')}>
                     <img src={logo} className={cx('logo-sidebar')} loading="lazy" />
                     <div className={cx('ware-brand')}>
-                         <h1 className={cx('username')}>{warehouseName}</h1>
-                         <Info className={cx('icon')} size={19} onClick={showInfoWarehouse}/>
+                        <h1 className={cx('username')}>{warehouseName}</h1>
+                        <Info className={cx('icon')} size={19} onClick={showInfoWarehouse} />
                     </div>
                 </div>
                 <div className={cx('sidebar-list')}>
