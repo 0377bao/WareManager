@@ -19,7 +19,7 @@ const DefaultLayout = ({ children }) => {
                 <PageLayout>{children}</PageLayout>
             </div>
 
-            <ChatBox classnames={'show'} isOpen={showChatBox} />
+            <ChatBox classnames={'show'} isOpen={showChatBox} closed={() => setShowChatBox((prev) => !prev)}/>
 
             <button className={cx('btn-show-chat-box')} onClick={() => setShowChatBox((prev) => !prev)}>
                 <Bot size={30} color={'white'}/>
