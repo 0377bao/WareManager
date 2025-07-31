@@ -49,14 +49,14 @@ const Header = ({ children }) => {
                 <Search />
                 <div>
                     <Notification>
-                        <Bell size={26} />
+                        <Bell className={cx('icon-right-header')} size={26} />
                     </Notification>
                 </div>
 
                 <div>
                     {/** avatar */}
                     <Menu menuItems={menuItems}>
-                        <CircleUserRound size={26} />
+                        <CircleUserRound className={cx('icon-right-header')} size={26} />
                     </Menu>
                 </div>
             </div>
