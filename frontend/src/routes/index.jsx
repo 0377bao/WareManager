@@ -1,4 +1,4 @@
-import { AuthPage, CheckPage, Dashboard, ProductPage, ReceiveProductPage, ReleaseProductPage, ReportPage, ReturnProductPage, Supplier, WarehousePage, WarehouseTransferPage, ProductErrorPage, Login } from "../pages";
+import { AuthPage, CheckPage, Dashboard, ProductPage, ReceiveProductPage, ReleaseProductPage, ReportPage, ReturnProductPage, Supplier, WarehousePage, WarehouseTransferPage, ProductErrorPage, Login, Register } from "../pages";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 const publicRoute = [
@@ -65,6 +65,11 @@ const publicRoute = [
   {
     page: Login,
     path: '/login',
+    layout: null
+  },
+  {
+    page: Register,
+    path: '/register',
     layout: null
   }
 ];
