@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 import Button from '@/components/Button';
 import { Eye, EyeClosed, Mail } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo_v2.jpg';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { get } from '@/utils/httpRequest';
@@ -32,6 +32,7 @@ const Register = () => {
             retypedPassword: '',
         },
     });
+    // eslint-disable-next-line no-unused-vars
     const navigate = useNavigate();
 
     const handleShowPassword = () => {
@@ -49,7 +50,10 @@ const Register = () => {
             },
         };
         try {
-            const response = await get('/register', { data });
+            // eslint-disable-next-line no-unused-vars
+            const {retypedPassword, ...res} = data
+            // eslint-disable-next-line no-unused-vars
+            const response = await get('/register', { res });
             toast.success('Register successfully', {
                 ...styleMessage,
             });
