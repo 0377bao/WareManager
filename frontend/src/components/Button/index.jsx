@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './Button.module.scss';
 import { Link } from 'react-router-dom';
@@ -20,9 +20,12 @@ export default function Button({
     children,
     leftIcon,
     rightIcon,
+    borderRadiusSmall = false,
+    borderRadiusMedium = false,
+    borderRadiusLarge = false,
     ...pass
 }) {
-  let Comp = 'button';
+    let Comp = 'button';
     const props = {
         ...pass,
     };
@@ -53,10 +56,13 @@ export default function Button({
         medium,
         large,
         disabled,
-        rounded
+        rounded,
+        borderRadiusSmall,
+        borderRadiusMedium,
+        borderRadiusLarge,
     });
     return (
-        <Comp className={classes} {...props}>
+        <Comp styles={{}} className={classes} {...props}>
             {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}
             <span className={cx('title')}>{children}</span>
             {rightIcon && <span className={cx('icon')}>{rightIcon}</span>}

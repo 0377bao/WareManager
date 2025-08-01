@@ -9,5 +9,21 @@ import ChatBox from './ChatBox';
 import Search from './Search';
 import Popper from './Popper';
 import Input from './Input';
+import Modal from './Modal';
+import InfoWare from './InfoWare';
 
-export { GlobalStyle, Icon, Button, WrapperTippy, Menu, Image, Notification, ChatBox, Search, Popper, Input };
+export {
+    GlobalStyle,
+    Icon,
+    Button,
+    WrapperTippy,
+    Menu,
+    Image,
+    Notification,
+    ChatBox,
+    Search,
+    Popper,
+    Input,
+    Modal,
+    InfoWare,
+};

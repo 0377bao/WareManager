@@ -7,6 +7,8 @@
     --sidebar-background: #ffffff;
     --primary-button-gradient-one: #42424a;
     --primary-button-gradient-two: #191919;
+    --primary-button-gradient-one-hover: #55555d;
+    --primary-button-gradient-two-hover: #2b2b2b;
     --primary-column-receive-warehouse: #4baf4f;
     --primary-column-exist-warehouse: #2fa1ed;
     --primary-column-release-warehouse: #fdcd55;
@@ -24,9 +26,32 @@
     --search-button-width: 52px;
     --search-button-spin: 30px;
 }
-
 html {
     font-size: 62.5%;
+    scrollbar-gutter: stable; // giữ slot
+}
+
+body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
 }
 
 body {
