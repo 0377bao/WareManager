@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
 import SidebarItem from './SidebarItem';
@@ -18,9 +18,12 @@ import {
     ShieldX,
     Info,
 } from 'lucide-react';
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/logo_v2.jpg';
 import { useLocation } from 'react-router-dom';
+import { Modal } from '@/components';
+import { InfoWare } from '@/components';
 
+const shopName = import.meta.env.VITE_SOFTWARE_NAME;
 const cx = classNames.bind(styles);
 
 const Sidebar = () => {
@@ -88,33 +91,46 @@ const Sidebar = () => {
     ];
 
     let location = useLocation();
-    const warehouseName = 'HT WareSoft';
+    const [isOpenInfo, setIsOpenInfo] = useState(false);
 
-    const showInfoWarehouse = () => {};
+    const closeInfoWarehouse = () => {
+        setIsOpenInfo(false);
+    };
 
     return (
-        <div className={cx('wrapper-sidebar')}>
-            <div className={cx('sidebar-content')}>
-                <div className={cx('info-user')}>
-                    <img src={logo} className={cx('logo-sidebar')} loading="lazy" />
-                    <div className={cx('ware-brand')}>
-                        <h1 className={cx('username')}>{warehouseName}</h1>
-                        <Info className={cx('icon')} size={19} onClick={showInfoWarehouse} />
+        <>
+            <div className={cx('wrapper-sidebar')}>
+                <div className={cx('sidebar-content')}>
+                    <div className={cx('info-user')}>
+                        <img src={logo} className={cx('logo-sidebar')} loading="lazy" />
+                        <div className={cx('ware-brand')}>
+                            <h1 className={cx('username')}>{shopName}</h1>
+                            <Info className={cx('icon')} size={16} onClick={() => setIsOpenInfo(true)} />
+                        </div>
+                    </div>
+                    <div className={cx('sidebar-list')}>
+                        {sidebarMenu.map((item, index) => (
+                            <SidebarItem
+                                key={index}
+                                title={item.title}
+                                iconName={item.iconName}
+                                path={item.path}
+                                location={location.pathname}
+                            />
+                        ))}
                     </div>
                 </div>
-                <div className={cx('sidebar-list')}>
-                    {sidebarMenu.map((item, index) => (
-                        <SidebarItem
-                            key={index}
-                            title={item.title}
-                            iconName={item.iconName}
-                            path={item.path}
-                            location={location.pathname}
-                        />
-                    ))}
-                </div>
             </div>
-        </div>
+            <Modal isOpenInfo={isOpenInfo} onClose={closeInfoWarehouse}>
+                <InfoWare
+                    warehouseId="WH001"
+                    warehouseName="Kho A"
+                    faxNumber="123456789"
+                    address="123 Đường ABC, Quận 1, TP.HCM"
+                    status="ACTIVE"
+                />
+            </Modal>
+        </>
     );
 };
 
