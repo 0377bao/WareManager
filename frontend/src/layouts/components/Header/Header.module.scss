@@ -28,15 +28,15 @@
     align-items: center;
     justify-content: flex-end;
    padding-right: 15px;
-   column-gap: 35px;
+   column-gap: 25px;
 
    & > .title {
      font-size: 1.6rem;
    }
 
-   & > .icon-right-header {
-     border: none;
-     outline: none;
-   }
 }
 
+.icon-right-header {
+     border: none;
+     outline: none;
+}

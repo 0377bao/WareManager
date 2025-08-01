@@ -77,7 +77,7 @@ export default function Search() {
                 <div className={cx('search')}>
                     <input
                         ref={searchElement}
-                        placeholder="Search account and videos"
+                        placeholder="Tìm kiếm thông tin"
                         spellCheck={false}
                         value={searchValue}
                         onChange={handleChange}

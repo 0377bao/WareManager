@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import Button from '@/components/Button';
 import { Eye, EyeClosed, Mail } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo_v2.jpg';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { get } from '@/utils/httpRequest';
@@ -37,6 +37,7 @@ const Login = () => {
             },
         };
         try {
+            // eslint-disable-next-line no-unused-vars
             const response = await get('/login', { data });
             toast.success('Login successfully', {
                 ...styleMessage,
