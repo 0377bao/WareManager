@@ -11,6 +11,7 @@ import Popper from './Popper';
 import Input from './Input';
 import Modal from './Modal';
 import InfoWare from './InfoWare';
+import MyTable from './MyTable';
 
 export {
     GlobalStyle,
@@ -26,4 +27,5 @@ export {
     Input,
     Modal,
     InfoWare,
+    MyTable,
 };
