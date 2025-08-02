@@ -7,6 +7,13 @@ import { Input } from '@/components';
 const cx = classNames.bind(styles);
 
 const ChatBox = ({ classnames, isOpen, closed }) => {
+    const handleSubMitInpt = (value) => {
+        console.log('Submit input');
+        console.log('value:', value);
+
+        // Logic for submitting input
+    };
+
     return (
         <div
             className={cx('chat-box', {
@@ -21,7 +28,7 @@ const ChatBox = ({ classnames, isOpen, closed }) => {
             </div>
             <div className={cx('content-chat-box')}>Nội dung</div>
             <div className={cx('wrapper-input')}>
-                <Input borderRadius={18} />
+                <Input borderRadius={18} onSubmit={handleSubMitInpt} />
             </div>
         </div>
     );
