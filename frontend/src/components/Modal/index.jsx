@@ -32,7 +32,14 @@ export default function Modal({ isOpenInfo, onClose, children }) {
                     >
                         <DialogPanel>
                             {children}
-                            <Button medium borderRadiusSmall primary onClick={onClose} style={{ marginTop: '1rem' }}>
+                            <Button
+                                className={cx('modal-close-button')}
+                                medium
+                                borderRadiusSmall
+                                primary
+                                onClick={onClose}
+                                style={{ marginTop: '1.5rem' }}
+                            >
                                 Close
                             </Button>
                         </DialogPanel>

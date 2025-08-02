@@ -3,21 +3,41 @@ import styles from './Input.module.scss';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/scale.css';
 import { useEffect, useRef, useState } from 'react';
+import { Send } from 'lucide-react';
+import { set } from 'react-hook-form';
 const limitCharacter = import.meta.env.VITE_LIMIT_CHARACTER;
 
 const cx = classNames.bind(styles);
 
 export default function Input({ borderRadius = 8 }) {
     const [value, setValue] = useState('');
-    const [rowInput, setRowInput] = useState(17);
+    const [rowInput, setRowInput] = useState(1);
     const btnPostRef = useRef();
     const inputRef = useRef();
-    const inputRefHeight = useRef();
+
+    const lineHeight = 17;
+    const maxRows = 5;
+    const minRows = 1;
 
     const handleOnchangeInput = (e) => {
         const valueChange = e.target.value;
         if (valueChange.length <= Number(limitCharacter)) {
             setValue(valueChange);
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handlePost();
+        }
+    };
+
+    const handlePost = () => {
+        if (!!value.trim()) {
+            console.log('Post:', value);
+            // Logic
+            setValue('');
         }
     };
 
@@ -29,12 +49,18 @@ export default function Input({ borderRadius = 8 }) {
             btnPostRef.current.classList.remove(cx('active'));
         }
 
-        const heightValue = inputRefHeight.current.scrollHeight;
+        inputRef.current.style.height = 'auto';
+        const scrollHeight = inputRef.current.scrollHeight;
+        const maxHeight = lineHeight * maxRows;
 
-        if (heightValue != rowInput) {
-            inputRef.current.style.height = heightValue + 'px';
-            setRowInput(heightValue);
+        if (scrollHeight < maxHeight) {
+            inputRef.current.style.height = scrollHeight + 'px';
+            inputRef.current.style.overflowY = 'hidden';
+        } else {
+            inputRef.current.style.height = maxHeight + 'px';
+            inputRef.current.style.overflowY = 'auto';
         }
+        setRowInput(Math.ceil(scrollHeight / lineHeight));
     }, [value]);
 
     return (
@@ -43,28 +69,22 @@ export default function Input({ borderRadius = 8 }) {
                 <div className={cx('input-area-group')}>
                     <textarea
                         ref={inputRef}
-                        rows="1"
                         className={cx('input-area')}
                         placeholder="Add comment..."
                         value={value}
+                        rows={minRows}
                         onChange={handleOnchangeInput}
+                        onKeyDown={handleKeyDown}
                     ></textarea>
-                    <textarea
-                        ref={inputRefHeight}
-                        rows="1"
-                        className={cx('input-area', 'input-height')}
-                        value={value}
-                        onChange={() => {}}
-                    ></textarea>
-                    {rowInput > 17 && (
+                    {rowInput > 1 && (
                         <span className={cx('limit-text')}>
                             {value.length}/{limitCharacter}
                         </span>
                     )}
                 </div>
             </div>
-            <button ref={btnPostRef} className={cx('btn-post')}>
-                Post
+            <button onClick={handlePost} className={cx('btn-post')}>
+                <Send ref={btnPostRef} size={22} strokeWidth={2} absoluteStrokeWidth />
             </button>
         </div>
     );
