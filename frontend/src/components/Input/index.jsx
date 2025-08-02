@@ -4,7 +4,6 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/scale.css';
 import { useEffect, useRef, useState } from 'react';
 import { Send } from 'lucide-react';
-import { set } from 'react-hook-form';
 const limitCharacter = import.meta.env.VITE_LIMIT_CHARACTER;
 
 const cx = classNames.bind(styles);
@@ -34,6 +33,7 @@ export default function Input({ borderRadius = 8, onSubmit }) {
     };
 
     const handlePost = () => {
+        // eslint-disable-next-line no-extra-boolean-cast
         if (!!value.trim()) {
             setValue('');
             onSubmit(value.trim());
