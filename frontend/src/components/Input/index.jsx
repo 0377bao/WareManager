@@ -9,7 +9,7 @@ const limitCharacter = import.meta.env.VITE_LIMIT_CHARACTER;
 
 const cx = classNames.bind(styles);
 
-export default function Input({ borderRadius = 8 }) {
+export default function Input({ borderRadius = 8, onSubmit }) {
     const [value, setValue] = useState('');
     const [rowInput, setRowInput] = useState(1);
     const btnPostRef = useRef();
@@ -35,9 +35,8 @@ export default function Input({ borderRadius = 8 }) {
 
     const handlePost = () => {
         if (!!value.trim()) {
-            console.log('Post:', value);
-            // Logic
             setValue('');
+            onSubmit(value.trim());
         }
     };
 
