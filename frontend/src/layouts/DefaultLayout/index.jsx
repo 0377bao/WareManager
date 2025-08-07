@@ -6,11 +6,14 @@ import Header from '../components/Header';
 import PageLayout from '../PageLayout';
 import { Bot } from 'lucide-react';
 import { ChatBox } from '@/components';
+import { Spin } from 'antd';
+import {useSelector} from "react-redux"
 
 const cx = classNames.bind(styles);
 
 const DefaultLayout = ({ children }) => {
     const [showChatBox, setShowChatBox] = useState(false);
+    const {statusLoading} = useSelector(state => state.LoadingSlice)
     return (
         <div className={cx('wrapper-layout')}>
             <Header />
@@ -25,6 +28,9 @@ const DefaultLayout = ({ children }) => {
                 <Bot size={30} color={'white'}/>
                 <p className={cx('title-chat-box')}>Trợ lý</p>
             </button>
+            {statusLoading && <div className={cx('overlay-loading')}>
+                <Spin size='large'/>
+            </div>}
         </div>
     );
 };
