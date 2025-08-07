@@ -12,13 +12,17 @@ export default function MyTable({
     pageSize = PAGESIZE,
     onChangePage,
     currentPage = 1,
+    rowSelection = null,
+    ...props
 }) {
     return (
         <Table
-            rowKey="id"
+            rowKey="key"
             columns={columns}
             dataSource={data}
             className={cx('custom-table', className)}
+            rowSelection={rowSelection}
+            {...props}
             pagination={
                 pagination && {
                     pageSize, // số dòng mỗi trang
@@ -54,6 +58,7 @@ export default function MyTable({
                             style={{
                                 padding: '6px',
                                 fontSize: '1.4rem',
+                                paddingLeft: '12px',
                                 ...props.style,
                             }}
                         >

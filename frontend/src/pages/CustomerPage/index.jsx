@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import { MyTable, Button, Popper, Modal, ModalOrder } from '@/components';
+import styles from './CustomerPage.module.scss';
 import { Eye } from 'lucide-react';
-import styles from './SupplierPage.module.scss';
 
 const cx = classNames.bind(styles);
 
 const columns = [
     {
-        title: 'Mã NCC',
-        dataIndex: 'supplierId',
-        key: 'supplierId',
+        title: 'Mã KH',
+        dataIndex: 'customerId',
+        key: 'customerId',
         width: '10%',
         ellipsis: true,
     },
     {
-        title: 'Tên nhà cung cấp',
+        title: 'Tên khách hàng',
         dataIndex: 'name',
         key: 'name',
         width: '20%',
@@ -49,24 +49,72 @@ const columns = [
         width: '10%',
         ellipsis: true,
         className: cx('transaction-history'),
+        render: (_, record) => (
+            <Button onClick={() => console.log(record.customerId)} small leftIcon={<Eye size={20} />} />
+        ),
     },
 ];
 
-const SupplierPage = () => {
+const CustomerPage = () => {
     const [page, setPage] = useState(1);
     const [isOpenInfo, setIsOpenInfo] = useState(false);
 
     const data = [
         {
             key: '1',
-            supplierId: '1',
+            customerId: '1',
             name: 'Alice',
             phone: '123-456-7890',
             address: '123 Main St',
             email: 'alice@example.com',
-            transactionHistory: <Button onClick={() => setIsOpenInfo(true)} small leftIcon={<Eye size={20} />} />,
+        },
+        {
+            key: '2',
+            customerId: '2',
+            name: 'Bob',
+            phone: '987-654-3210',
+            address: '456 Elm St',
+            email: 'bob@example.com',
+        },
+        {
+            key: '3',
+            customerId: '3',
+            name: 'Charlie',
+            phone: '555-555-5555',
+            address: '789 Oak St',
+            email: 'charlie@example.com',
+        },
+        {
+            key: '4',
+            customerId: '4',
+            name: 'David',
+            phone: '444-444-4444',
+            address: '101 Pine St',
+            email: 'david@example.com',
+        },
+        {
+            key: '5',
+            customerId: '5',
+            name: 'Eve',
+            phone: '222-222-2222',
+            address: '202 Maple St',
+            email: 'eve@example.com',
         },
     ];
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (newSelectedRowKeys) => {
+            setSelectedRowKeys(newSelectedRowKeys);
+        },
+    };
+
+    useEffect(() => {
+        // Fetch data or perform actions when selectedRowKeys change
+        console.log('Selected Row Keys:', selectedRowKeys);
+    }, [selectedRowKeys]);
 
     const dataOrderHistory = [
         {
@@ -115,6 +163,7 @@ const SupplierPage = () => {
                     data={data}
                     pagination
                     pageSize={5}
+                    rowSelection={rowSelection}
                     onChangePage={onChangePage}
                 />
             </div>
@@ -125,4 +174,4 @@ const SupplierPage = () => {
     );
 };
 
-export default SupplierPage;
+export default CustomerPage;

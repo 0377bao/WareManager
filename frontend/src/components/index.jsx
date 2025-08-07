@@ -12,6 +12,7 @@ import Input from './Input';
 import Modal from './Modal';
 import InfoWare from './InfoWare';
 import MyTable from './MyTable';
+import ModalOrder from './ModalOrder';
 
 export {
     GlobalStyle,
@@ -28,4 +29,5 @@ export {
     Modal,
     InfoWare,
     MyTable,
+    ModalOrder,
 };
