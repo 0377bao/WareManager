@@ -32,15 +32,15 @@ const dataSource = [
 // mockdata
 const api = () => {
     return new Promise((resolve, reject) => {
-        const isResult = true
-        if(isResult) {
+        const isResult = true;
+        if (isResult) {
             setTimeout(() => {
                 resolve({
-                    skug: "SPG001",
-                    sku: 'SP001', 
-                    productName: 'Gạo thơm', 
+                    skug: 'SPG001',
+                    sku: 'SP001',
+                    productName: 'Gạo thơm',
                     image: 'https://marketplace.canva.com/EAFALM0AfOs/1/0/900w/canva-m%C3%A0u-n%C3%A2u-be-h%C3%ACnh-n%E1%BB%81n-%C4%91i%E1%BB%87n-tho%E1%BA%A1i-d%E1%BB%85-th%C6%B0%C6%A1ng-y%C3%AAu-%C4%91%E1%BB%9Di-iSucd-62myg.jpg',
-                    des: "Haha",
+                    des: 'Haha',
                     price: 10,
                     unit: 'cái',
                     supplierId: 'NCC20',
@@ -53,39 +53,38 @@ const api = () => {
                             available: 15,
                             location: 'Khu A',
                             wareId: 'WH123',
-                        }
-                    ]
-                })
-            }, 2000)
-        }else {
-            reject(null)
+                        },
+                    ],
+                });
+            }, 2000);
+        } else {
+            reject(null);
         }
-    })
-}
+    });
+};
 
 const ProductPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productId, setProductId] = useState(null);
     const [productData, setProductData] = useState(null);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const handleOnChange = useCallback((page, pageSize) => {
         setCurrentPage(page);
     }, []);
 
     const handleShowProductDetail = async (productId) => {
-        try{
-            dispatch(startLoading())
+        try {
+            dispatch(startLoading());
             // call api lấy thông tin product
             const res = await api();
-            setProductData(res)
-        }catch(err) {
+            setProductData(res);
+        } catch (err) {
             throw new Error(err);
-        }finally{
-            setProductId(productId)
-            dispatch(stopLoading())
+        } finally {
+            setProductId(productId);
+            dispatch(stopLoading());
         }
-
     };
     const tableColumns = [
         {
@@ -112,7 +111,10 @@ const ProductPage = () => {
                 return (
                     <div className={cx('action-table')}>
                         <Tippy content={'Xem chi tiết'} placement="bottom-end">
-                            <button className={cx('action-table-icon')} onClick={() => handleShowProductDetail(record.sku)}>
+                            <button
+                                className={cx('action-table-icon')}
+                                onClick={() => handleShowProductDetail(record.sku)}
+                            >
                                 <Eye size={20} />
                             </button>
                         </Tippy>
@@ -126,7 +128,7 @@ const ProductPage = () => {
             },
         },
     ];
-    
+
     return (
         <div className={cx('wrapper-product')}>
             <h1>Danh sách sản phẩm</h1>
@@ -139,7 +141,13 @@ const ProductPage = () => {
                 onChangePage={handleOnChange}
                 currentPage={currentPage}
             />
-            {productId && <ProductDetail data={productData} onClose={() => setProductId(null)} classname={cx('modal-product-detail')} />}
+            {productId && (
+                <ProductDetail
+                    data={productData}
+                    onClose={() => setProductId(null)}
+                    classname={cx('modal-product-detail')}
+                />
+            )}
         </div>
     );
 };
