@@ -47,12 +47,11 @@
 }
 
 .outline {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--primary-button-gradient-two-hover);
+    color: var(--primary-button-gradient-two-hover);
 
     &:hover {
-        border-color: var(--primary);
-        background-color: rgba(254, 44, 85, 0.06);
+        background-color: var(--primary--hover-background);
     }
 }
 
@@ -64,7 +63,7 @@
 
 //Button size
 .small {
-    min-width: 88px;
+    min-width: 60px;
     padding: 4px 16px;
 }
 
