@@ -1,63 +1,77 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import { MyTable, Button, Popper, Modal, ModalOrder } from '@/components';
 import styles from './CustomerPage.module.scss';
-import { Eye } from 'lucide-react';
+import { Eye, PencilIcon } from 'lucide-react';
+import Tippy from '@tippyjs/react';
+import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 
 const cx = classNames.bind(styles);
-
-const columns = [
-    {
-        title: 'Mã KH',
-        dataIndex: 'customerId',
-        key: 'customerId',
-        width: '10%',
-        ellipsis: true,
-    },
-    {
-        title: 'Tên khách hàng',
-        dataIndex: 'name',
-        key: 'name',
-        width: '20%',
-        ellipsis: true,
-    },
-    {
-        title: 'SDT',
-        dataIndex: 'phone',
-        key: 'phone',
-        width: '10%',
-        ellipsis: true,
-    },
-    {
-        title: 'Địa chỉ',
-        dataIndex: 'address',
-        key: 'address',
-        width: '30%',
-        ellipsis: true,
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        width: '20%',
-        ellipsis: true,
-    },
-    {
-        title: 'Lịch sử GD',
-        dataIndex: 'transactionHistory',
-        key: 'transactionHistory',
-        width: '10%',
-        ellipsis: true,
-        className: cx('transaction-history'),
-        render: (_, record) => (
-            <Button onClick={() => console.log(record.customerId)} small leftIcon={<Eye size={20} />} />
-        ),
-    },
-];
+const cxGlobal = classNames.bind(globalStyle);
 
 const CustomerPage = () => {
     const [page, setPage] = useState(1);
     const [isOpenInfo, setIsOpenInfo] = useState(false);
+
+    const columns = [
+        {
+            title: 'Mã KH',
+            dataIndex: 'customerId',
+            key: 'customerId',
+            width: '10%',
+            ellipsis: true,
+        },
+        {
+            title: 'Tên khách hàng',
+            dataIndex: 'name',
+            key: 'name',
+            width: '20%',
+            ellipsis: true,
+        },
+        {
+            title: 'SDT',
+            dataIndex: 'phone',
+            key: 'phone',
+            width: '10%',
+            ellipsis: true,
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            key: 'address',
+            width: '30%',
+            ellipsis: true,
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            width: '20%',
+            ellipsis: true,
+        },
+        {
+            title: 'Lịch sử GD',
+            dataIndex: 'transactionHistory',
+            key: 'transactionHistory',
+            width: '10%',
+            ellipsis: true,
+            className: cx('transaction-history'),
+            render: (_, record) => {
+                return (
+                    <div className={cxGlobal('action-table')}>
+                        <Tippy content={'Xem chi tiết'} placement="bottom-end">
+                            <button
+                                className={cxGlobal('action-table-icon')}
+                                onClick={() => console.log(record.customerId)}
+                            >
+                                <Eye size={20} />
+                            </button>
+                        </Tippy>
+                    </div>
+                );
+            },
+        },
+    ];
 
     const data = [
         {
