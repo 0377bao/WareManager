@@ -1,29 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import { MyTable, Button, Popper, Modal, ModalOrder } from '@/components';
+import styles from './CustomerPage.module.scss';
 import { Eye, PencilIcon } from 'lucide-react';
-import styles from './SupplierPage.module.scss';
-import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 import Tippy from '@tippyjs/react';
-import ModalUpdateSupplier from '../../components/ModalUpdateSupplier';
-const cxGlobal = classNames.bind(globalStyle);
+import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 
 const cx = classNames.bind(styles);
+const cxGlobal = classNames.bind(globalStyle);
 
-const SupplierPage = () => {
+const CustomerPage = () => {
     const [page, setPage] = useState(1);
     const [isOpenInfo, setIsOpenInfo] = useState(false);
 
     const columns = [
         {
-            title: 'Mã NCC',
-            dataIndex: 'supplierId',
-            key: 'supplierId',
+            title: 'Mã KH',
+            dataIndex: 'customerId',
+            key: 'customerId',
             width: '10%',
             ellipsis: true,
         },
         {
-            title: 'Tên nhà cung cấp',
+            title: 'Tên khách hàng',
             dataIndex: 'name',
             key: 'name',
             width: '20%',
@@ -68,11 +67,6 @@ const SupplierPage = () => {
                                 <Eye size={20} />
                             </button>
                         </Tippy>
-                        <Tippy content={'Chỉnh sửa'} placement="bottom-end">
-                            <button className={cxGlobal('action-table-icon')} onClick={() => setIsOpenInfo(true)}>
-                                <PencilIcon size={20} />
-                            </button>
-                        </Tippy>
                     </div>
                 );
             },
@@ -82,12 +76,78 @@ const SupplierPage = () => {
     const data = [
         {
             key: '1',
-            supplierId: '1',
+            customerId: '1',
             name: 'Alice',
             phone: '123-456-7890',
             address: '123 Main St',
             email: 'alice@example.com',
-            transactionHistory: <Button onClick={() => setIsOpenInfo(true)} small leftIcon={<Eye size={20} />} />,
+        },
+        {
+            key: '2',
+            customerId: '2',
+            name: 'Bob',
+            phone: '987-654-3210',
+            address: '456 Elm St',
+            email: 'bob@example.com',
+        },
+        {
+            key: '3',
+            customerId: '3',
+            name: 'Charlie',
+            phone: '555-555-5555',
+            address: '789 Oak St',
+            email: 'charlie@example.com',
+        },
+        {
+            key: '4',
+            customerId: '4',
+            name: 'David',
+            phone: '444-444-4444',
+            address: '101 Pine St',
+            email: 'david@example.com',
+        },
+        {
+            key: '5',
+            customerId: '5',
+            name: 'Eve',
+            phone: '222-222-2222',
+            address: '202 Maple St',
+            email: 'eve@example.com',
+        },
+    ];
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (newSelectedRowKeys) => {
+            setSelectedRowKeys(newSelectedRowKeys);
+        },
+    };
+
+    useEffect(() => {
+        // Fetch data or perform actions when selectedRowKeys change
+        console.log('Selected Row Keys:', selectedRowKeys);
+    }, [selectedRowKeys]);
+
+    const dataOrderHistory = [
+        {
+            key: '1',
+            orderId: 'ORD001',
+            customerName: 'Alice',
+            employeeName: 'Bob',
+            warehouseId: 'WH001',
+            createdAt: '2023-10-01',
+            detail: 'Order details here...',
+        },
+        {
+            key: '2',
+            orderId: 'ORD002',
+            customerName: 'Charlie',
+            employeeName: 'Dave',
+            warehouseId: 'WH002',
+            createdAt: '2023-10-02',
+            detail: 'Order details here...',
         },
     ];
 
@@ -117,14 +177,15 @@ const SupplierPage = () => {
                     data={data}
                     pagination
                     pageSize={5}
+                    rowSelection={rowSelection}
                     onChangePage={onChangePage}
                 />
             </div>
-            <Modal showButtonClose={false} isOpenInfo={isOpenInfo} onClose={closeModal}>
-                <ModalUpdateSupplier isOpenInfo={isOpenInfo} onClose={closeModal} />
+            <Modal isOpenInfo={isOpenInfo} onClose={closeModal}>
+                <ModalOrder isAdmin={true} dataOrderHistory={dataOrderHistory} />
             </Modal>
         </div>
     );
 };
 
-export default SupplierPage;
+export default CustomerPage;

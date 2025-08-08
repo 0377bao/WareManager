@@ -59,3 +59,23 @@ body {
     overflow-x: hidden;
     background-color: var(--primary-background);
 }
+
+.action-table {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 6px;
+    width: 100%;
+}
+
+.action-table-icon {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #e7e7e7;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    justify-content: center;
+    cursor: pointer;
+}

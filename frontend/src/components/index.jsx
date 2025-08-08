@@ -12,6 +12,7 @@ import Input from './Input';
 import Modal from './Modal';
 import InfoWare from './InfoWare';
 import MyTable from './MyTable';
+import ModalOrder from './ModalOrder';
 import ProductDetail from './ProductDetail';
 import ProductEdit from './ProductEdit';
 
@@ -31,5 +32,6 @@ export {
     InfoWare,
     MyTable,
     ProductDetail,
-    ProductEdit
+    ProductEdit,
+    ModalOrder
 };

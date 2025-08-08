@@ -20,9 +20,10 @@ const Header = ({ children }) => {
         '/return-order': 'Đổi trả',
         '/auth': 'Phân quyền',
         '/product-error': 'Quản lý hàng lỗi',
-        '/supplier': "Nhà cung cấp",
+        '/supplier': 'Nhà cung cấp',
         '/ware-transfer': 'Chuyển kho',
         '/manage-warehouse': 'Quản lý kho',
+        '/customer': 'Khách hàng',
     };
 
     const menuItems = [

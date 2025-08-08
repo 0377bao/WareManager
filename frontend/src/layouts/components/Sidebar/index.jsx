@@ -17,6 +17,7 @@ import {
     Factory,
     ShieldX,
     Info,
+    Users,
 } from 'lucide-react';
 import logo from '../../../assets/logo_v2.jpg';
 import { useLocation } from 'react-router-dom';
@@ -54,9 +55,9 @@ const Sidebar = () => {
             path: '/check-inventory',
         },
         {
-            title: 'Báo cáo',
-            iconName: ClipboardMinus,
-            path: '/report',
+            title: 'Khách hàng',
+            iconName: Users,
+            path: '/customer',
         },
         {
             title: 'Đổi trả',
