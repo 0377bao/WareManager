@@ -6,7 +6,7 @@ import Button from '../Button';
 
 const cx = classNames.bind(styles);
 
-export default function Modal({ isOpenInfo, onClose, children }) {
+const Modal = ({ isOpenInfo, onClose, children, showButtonClose = true }) => {
     return (
         <Transition appear show={isOpenInfo} as={Fragment}>
             <Dialog as="div" onClose={onClose} className={cx('modal-wrapper')}>
@@ -32,20 +32,24 @@ export default function Modal({ isOpenInfo, onClose, children }) {
                     >
                         <DialogPanel>
                             {children}
-                            <Button
-                                className={cx('modal-close-button')}
-                                medium
-                                borderRadiusSmall
-                                primary
-                                onClick={onClose}
-                                style={{ marginTop: '1.5rem' }}
-                            >
-                                Close
-                            </Button>
+                            {showButtonClose && (
+                                <Button
+                                    className={cx('modal-close-button')}
+                                    medium
+                                    borderRadiusSmall
+                                    primary
+                                    onClick={onClose}
+                                    style={{ marginTop: '1.5rem' }}
+                                >
+                                    Đóng
+                                </Button>
+                            )}
                         </DialogPanel>
                     </Transition.Child>
                 </div>
             </Dialog>
         </Transition>
     );
-}
+};
+
+export default Modal;
