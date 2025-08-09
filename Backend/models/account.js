@@ -5,25 +5,26 @@ module.exports = (sequelize, Sequelize) => {
       autoIncrement: true,
       primaryKey: true
     },
-    phone: {
+    email: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: false
     },
-    refreshToken: {
+    statusWork: {
       type: Sequelize.STRING,
       allowNull: false
     },
-    userID: {
-      type: Sequelize.INTEGER,
+    employeeID: {
+      type: Sequelize.STRING,
       allowNull: false,
       references: {
-        model: 'users',
-        key: 'userID'
+        model: 'employees',
+        key: 'employeeID'
       },
       onDelete: 'CASCADE'
     }
@@ -33,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
   });
 
   Account.associate = (models) => {
-    Account.belongsTo(models.User, { foreignKey: 'userID', as: 'users' });
+    Account.belongsTo(models.Employee, { foreignKey: 'employeeID', as: 'employee' });
   };
 
   return Account;

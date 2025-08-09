@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "sapassword",
-    "database": "userservice",
+    "database": "EmployeeDatabase",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

@@ -6,25 +6,26 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true
       },
-      phone: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
       },
       password: {
         type: Sequelize.STRING,
+        allowNull: false,
+        unique: false
+      },
+      statusWork: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      refreshToken: {
+      employeeID: {
         type: Sequelize.STRING,
-        allowNull: true
-      },
-      userID: {
-        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
-          key: 'userID'
+          model: 'employees',
+          key: 'employeeID'
         },
         onDelete: 'CASCADE'
       }
