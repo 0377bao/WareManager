@@ -43,6 +43,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true
       },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       warehouseId: {
         type: Sequelize.STRING,
         allowNull: false
