@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames/bind';
-import { MyTable, Button, Popper, Modal, ModalOrder } from '@/components';
+import { MyTable, Modal, ModalOrder } from '@/components';
 import styles from './CustomerPage.module.scss';
-import { Eye, PencilIcon } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
+import ModelFilter from '../../components/ModelFilter';
 
 const cx = classNames.bind(styles);
 const cxGlobal = classNames.bind(globalStyle);
 
 const CustomerPage = () => {
     const [page, setPage] = useState(1);
+    const [nameFilter, setNameFilter] = useState('');
+    const [phoneFilter, setPhoneFilter] = useState('');
+    const [emailFilter, setEmailFilter] = useState('');
     const [isOpenInfo, setIsOpenInfo] = useState(false);
 
     const columns = [
@@ -116,20 +120,6 @@ const CustomerPage = () => {
         },
     ];
 
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: (newSelectedRowKeys) => {
-            setSelectedRowKeys(newSelectedRowKeys);
-        },
-    };
-
-    useEffect(() => {
-        // Fetch data or perform actions when selectedRowKeys change
-        console.log('Selected Row Keys:', selectedRowKeys);
-    }, [selectedRowKeys]);
-
     const dataOrderHistory = [
         {
             key: '1',
@@ -160,15 +150,47 @@ const CustomerPage = () => {
         setIsOpenInfo(false);
     };
 
+    const handleSubmitFilter = () => {
+        console.log('Filtering with:', {
+            name: nameFilter,
+            phone: phoneFilter,
+            email: emailFilter,
+        });
+    };
+
+    const columnsFilter = [
+        {
+            id: 'name',
+            label: 'Tên khách hàng',
+            value: nameFilter,
+            setValue: setNameFilter,
+        },
+        {
+            id: 'phone',
+            label: 'Số điện thoại',
+            value: phoneFilter,
+            setValue: setPhoneFilter,
+        },
+        {
+            id: 'email',
+            label: 'Email',
+            value: emailFilter,
+            setValue: setEmailFilter,
+        },
+    ];
+
     return (
         <div className={cx('wrapper-report')}>
             <div className={cx('header')}>
-                <Popper>
-                    <div>
-                        {/* <span className={cx('title')}>Tên khách hàng</span>
-                        <input type="text" className={cx('input')} placeholder="Nhập tên khách hàng" /> */}
-                    </div>
-                </Popper>
+                <ModelFilter
+                    handleSubmitFilter={handleSubmitFilter}
+                    handleResetFilters={() => {
+                        setNameFilter('');
+                        setPhoneFilter('');
+                        setEmailFilter('');
+                    }}
+                    columns={columnsFilter}
+                />
             </div>
             <div className={cx('content')}>
                 <MyTable
@@ -177,7 +199,6 @@ const CustomerPage = () => {
                     data={data}
                     pagination
                     pageSize={5}
-                    rowSelection={rowSelection}
                     onChangePage={onChangePage}
                 />
             </div>
