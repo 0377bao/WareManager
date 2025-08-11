@@ -5,13 +5,18 @@ import { Eye, PencilIcon } from 'lucide-react';
 import styles from './SupplierPage.module.scss';
 import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 import Tippy from '@tippyjs/react';
-import ModalUpdateSupplier from '../../components/ModalUpdateSupplier';
+import ModalUpdate from '../../components/ModalUpdate';
 const cxGlobal = classNames.bind(globalStyle);
 
 const cx = classNames.bind(styles);
 
 const SupplierPage = () => {
     const [page, setPage] = useState(1);
+    const [supplierId, setSupplierId] = useState(null);
+    const [supplierName, setSupplierName] = useState('');
+    const [supplierPhone, setSupplierPhone] = useState('');
+    const [supplierAddress, setSupplierAddress] = useState('');
+    const [supplierEmail, setSupplierEmail] = useState('');
     const [isOpenInfo, setIsOpenInfo] = useState(false);
 
     const columns = [
@@ -100,6 +105,49 @@ const SupplierPage = () => {
         setIsOpenInfo(false);
     };
 
+    const columnUpdate = [
+        {
+            id: 1,
+            label: 'Mã NCC',
+            value: supplierId,
+            setValue: setSupplierId
+        },
+        {
+            id: 2,
+            label: 'Tên nhà cung cấp',
+            value: supplierName,
+            setValue: setSupplierName
+        },
+        {
+            id: 3,
+            label: 'SDT',
+            value: supplierPhone,
+            setValue: setSupplierPhone
+        },
+        {
+            id: 4,
+            label: 'Địa chỉ',
+            value: supplierAddress,
+            setValue: setSupplierAddress
+        },
+        {
+            id: 5,
+            label: 'Email',
+            value: supplierEmail,
+            setValue: setSupplierEmail
+        }
+    ]
+
+    const handleUpdateSupplier = () => {
+        console.log({
+            supplierId,
+            supplierName,
+            supplierPhone,
+            supplierAddress,
+            supplierEmail
+        });
+    }
+
     return (
         <div className={cx('wrapper-report')}>
             <div className={cx('header')}>
@@ -121,7 +169,7 @@ const SupplierPage = () => {
                 />
             </div>
             <Modal showButtonClose={false} isOpenInfo={isOpenInfo} onClose={closeModal}>
-                <ModalUpdateSupplier isOpenInfo={isOpenInfo} onClose={closeModal} />
+                <ModalUpdate isOpenInfo={isOpenInfo} onClose={closeModal} columns={columnUpdate} label="Cập nhật nhà cung cấp" onSubmit={handleUpdateSupplier} />
             </Modal>
         </div>
     );

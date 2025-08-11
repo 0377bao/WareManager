@@ -25,6 +25,12 @@
     --search-top-spacer: 9px;
     --search-button-width: 52px;
     --search-button-spin: 30px;
+
+    // header
+    --z-index-header: 1001;
+
+    // modal filter
+    --filter-height-customer: 140px; 
 }
 html {
     font-size: 62.5%;
