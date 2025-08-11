@@ -13,6 +13,7 @@ import ProductErrorPage from './ProductErrorPage';
 import Login from './Login';
 import Register from './Register';
 import Customer from './CustomerPage';
+import ProfilePage from './ProfilePage';
 
 export {
     Dashboard,
@@ -30,4 +31,5 @@ export {
     Login,
     Register,
     Customer,
+    ProfilePage
 };

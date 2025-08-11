@@ -15,6 +15,7 @@ import MyTable from './MyTable';
 import ModalOrder from './ModalOrder';
 import ProductDetail from './ProductDetail';
 import ProductEdit from './ProductEdit';
+import ModalEmployee from './ModalEmployee';
 
 export {
     GlobalStyle,
@@ -33,5 +34,6 @@ export {
     MyTable,
     ProductDetail,
     ProductEdit,
-    ModalOrder
+    ModalOrder,
+    ModalEmployee
 };
