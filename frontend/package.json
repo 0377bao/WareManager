@@ -23,6 +23,7 @@
     "axios": "^1.11.0",
     "classnames": "^2.5.1",
     "lucide-react": "^0.532.0",
+    "md5": "^2.3.0",
     "normalize.css": "^8.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
