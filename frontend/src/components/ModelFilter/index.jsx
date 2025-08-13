@@ -5,7 +5,7 @@ import { MyTable, Button, Popper, Modal, ModalOrder } from '@/components';
 
 const cx = classNames.bind(styles);
 
-const ModelFilter = ({handleSubmitFilter, handleResetFilters, columns}) => {
+const ModelFilter = ({handleSubmitFilter, handleResetFilters, columns, children}) => {
     const [lastScrollY, setLastScrollY] = useState(0);
     const contentRef = useRef();
 
@@ -48,6 +48,7 @@ const ModelFilter = ({handleSubmitFilter, handleResetFilters, columns}) => {
                 ))}
             </div>
             <div className={cx('wrapper-action')}>
+                {children}
                 <Button primary className={cx('btn-filter')} onClick={handleSubmitFilter}>
                     Tìm kiếm
                 </Button>

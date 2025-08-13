@@ -18,20 +18,8 @@ const ProfilePage = () => {
             empImage: '',
     })
 
-    const handleUpdateProfile = async () => {
-        try{
-            // call api update profile
-        }catch(err) {
-            // throw err
-        }
-    }
     return (
-    
-            <ModalEmployee isAdmin={false} data={currentUser} setData={setCurrentUser}>
-                    <Button primary onClick={handleUpdateProfile}>
-                        <span>Cập nhật</span>
-                    </Button>
-            </ModalEmployee>
+            <ModalEmployee isAdmin={false} data={currentUser} setData={setCurrentUser}/>  
     );
 }
 

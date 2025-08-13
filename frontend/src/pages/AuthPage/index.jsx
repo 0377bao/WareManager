@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './AuthPage.module.scss';
-import { Image, Button } from '@/components';
+import { Image, Button, ModalCreateAccount, ModalEmployee, ModelFilter } from '@/components';
 import { MyTable } from '@/components';
 import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 import Tippy from '@tippyjs/react';
 import { Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { ModalEmployee } from '../../components';
+import { styleMessage } from '../../constants';
 
 const cx = classNames.bind(styles);
 const cxGlobal = classNames.bind(globalStyle);
@@ -168,21 +168,22 @@ const dataSource = [
     },
 ];
 
-const styleMessages = {
-    style: {
-        fontSize: '1.5rem',
+const columnsFilter = [
+    {
+        id: 1,
+        label: 'Mã nhân viên',
     },
-};
+    {
+        id: 2,
+        label: 'Số điện thoại',
+    },
+    {
+        id: 3,
+        label: 'Chức vụ',
+    },
+];
 
-const AuthPage = () => {
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [action, setAction] = useState({
-        add: false,
-        update: false,
-        createAccount: false,
-    });
-
-    const [empData, setEmpData] = useState({
+const resetData = {
         empId: '',
         empName: '',
         empCCCD: '',
@@ -195,7 +196,18 @@ const AuthPage = () => {
         empRole: '',
         empStatus: '',
         empImage: '',
+    }
+
+const AuthPage = () => {
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [action, setAction] = useState({
+        add: false,
+        update: false,
+        createAccount: false,
     });
+
+    const [empData, setEmpData] = useState(resetData);
+    const [showModalAccount, setShowModalAccount] = useState(false)
 
     const rowSelection = {
         type: 'radio',
@@ -215,9 +227,9 @@ const AuthPage = () => {
         // validate dữ liệu
         try {
             //call api thêm nhân viên
-            toast.success('Thêm nhân viên mới thành công', styleMessages);
+            toast.success('Thêm nhân viên mới thành công', styleMessage);
         } catch (err) {
-            toast.error(err, styleMessages);
+            toast.error(err, styleMessage);
         }
     };
 
@@ -226,6 +238,7 @@ const AuthPage = () => {
             setSelectedRowKeys((prev) => []);
         }
         setAction((prev) => ({ ...prev, [key]: value }));
+        setEmpData(resetData)
     };
 
     useEffect(() => {
@@ -243,17 +256,31 @@ const AuthPage = () => {
         }
     }, []);
 
+    const showModalCreateAccount = async () => {
+        try{
+            // call api check empId exist
+            setShowModalAccount(prev => !prev)
+        }catch(err) {
+            toast.error('Vui lòng tạo nhân viên trước khi tạo tài khoản')
+        }
+    }
+
     return (
         <div className={cx('wrapper-auth')}>
             {action.add && (
-                <ModalEmployee data={empData} isAdmin={true} onClose={() => handleCloseModal('add', false)}>
-                    <Button primary onClick={handleAddEmployee}>
+                <ModalEmployee data={empData} isAdmin={true} onClose={() => handleCloseModal('add', false)} setData={setEmpData}>
+                    <>
+                        <Button primary onClick={handleAddEmployee}>
                         <span>Thêm nhân viên</span>
                     </Button>
+                    <Button primary onClick={showModalCreateAccount}>
+                        <span>Tạo tài khoản</span>
+                    </Button>
+                    </>  
                 </ModalEmployee>
             )}
             {action.update && (
-                <ModalEmployee isAdmin={true} data={empData} onClose={() => handleCloseModal('update', false)}>
+                <ModalEmployee isAdmin={true} data={empData} onClose={() => handleCloseModal('update', false)} setData={setEmpData}>
                     <Button primary onClick={handleUpdateEmployee}>
                         <span>Cập nhật</span>
                     </Button>
@@ -261,7 +288,11 @@ const AuthPage = () => {
             )}
 
             {/** Lọc theo điều kiện */}
-            <div className={cx('action-filter')}></div>
+            <ModelFilter columns={columnsFilter}>
+                <Button primary onClick={() => handleCloseModal('add', true)} disabled={action.add}>
+                    <span>Thêm nhân viên</span>
+                </Button>
+            </ModelFilter>
 
             <h1>Danh sách nhân viên</h1>
             <MyTable
@@ -272,6 +303,8 @@ const AuthPage = () => {
                 pagination
                 className={cx('my-table-employee')}
             ></MyTable>
+
+            {showModalAccount && <ModalCreateAccount isOpen={showModalAccount} onClose={() => setShowModalAccount(prev => !prev)}/>}
         </div>
     );
 };

@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { get } from '@/utils/httpRequest';
 import { useNavigate } from 'react-router-dom';
+import { styleMessage } from '../../constants';
 
 const cx = classNames.bind(styles);
 const softwareName = import.meta.env.VITE_SOFTWARE_NAME;
@@ -31,11 +32,6 @@ const Login = () => {
     };
 
     const submitData = async (data) => {
-        const styleMessage = {
-            style: {
-                fontSize: '1.5rem',
-            },
-        };
         try {
             // eslint-disable-next-line no-unused-vars
             const response = await get('/login', { data });

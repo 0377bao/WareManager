@@ -4,7 +4,7 @@ import styles from './ModalEmployee.module.scss';
 import { Button, Image, Modal } from '@/components';
 import { Eye, XCircle, ArrowRightLeft } from 'lucide-react';
 import Tippy from '@tippyjs/react';
-import { useLocation } from 'react-router-dom';
+import md5 from "md5"
 
 const cx = classNames.bind(styles);
 const roleEmployee = ['Quản trị viên', 'Quản lý kho', 'Nhân viên nhận hàng', 'Nhân viên xuất hàng', 'Kế toán'];
@@ -22,7 +22,7 @@ const FormGroup = ({
     typeInput,
     valueInput,
     children,
-    isAdmin,
+    readOnly,
     idInput,
     onChange,
     checked = false,
@@ -33,7 +33,7 @@ const FormGroup = ({
             <input
                 id={idInput}
                 type={typeInput}
-                readOnly={isAdmin}
+                readOnly={readOnly}
                 value={valueInput}
                 onChange={onChange}
                 checked={checked}
@@ -44,7 +44,6 @@ const FormGroup = ({
 };
 
 const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) => {
-    let location = useLocation()
     const [listWarehouseId, setListWarehouseId] = useState(['K01', 'K02', 'K03']);
     const [viewDetailRole, setViewDetailRole] = useState(false);
     const [listRoleUser, setListRoleUser] = useState([]);
@@ -69,7 +68,9 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
         setData((prev) => ({ ...prev, [key]: value }));
     };
 
-    const handleCreateEmployeeId = useCallback((empDob) => {
+    const handleCreateEmployeeId = useCallback(() => {
+        const salt = md5(Date.now()).slice(-5)
+        setData(prev => ({...prev, empId: `NV${salt}`}))
         // return empId
     }, []);
 
@@ -78,7 +79,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
     };
 
     useEffect(() => {
-        if (data) {
+        if (data && data.empRole !== "") {
             setListRoleUser(data.empRole.split(','));
         }
     }, [data]);
@@ -133,7 +134,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                         <FormGroup
                             labelTitle={'Mã nhân viên'}
                             idInput={'employeeId'}
-                            isAdmin={isAdmin}
+                            readOnly={true}
                             valueInput={data.empId}
                             typeInput={'text'}
                         >
@@ -154,6 +155,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                             valueInput={data.empName}
                             idInput={'employeeName'}
                             onChange={(e) => onChangeInput('empName', e.target.value)}
+                            readOnly={isAdmin ? false : true}
                         />
                     </div>
                     <div className={cx('row')}>
@@ -164,15 +166,17 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                             valueInput={data.empCCCD}
                             idInput={'employeeempCCCD'}
                             onChange={(e) => onChangeInput('empCCCD', e.target.value)}
+                            readOnly={isAdmin ? false : true}
                         />
 
                         <FormGroup
                             labelTitle={'Ngày sinh'}
-                            htmlForLabel={'employeeDate'}
+                            htmlForLabel={'employeeDob'}
                             typeInput={'date'}
                             valueInput={data.empDob}
-                            idInput={'employeeDate'}
-                            onChange={(e) => onChangeInput('empDate', e.target.value)}
+                            idInput={'employeeDob'}
+                            onChange={(e) => onChangeInput('empDob', e.target.value)}
+                            readOnly={isAdmin ? false : true}
                         />
                     </div>
                     <div className={cx('row')}>
@@ -184,7 +188,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                                     id="employeeMaleGender"
                                     name="gender"
                                     type="radio"
-                                    value={'mail'}
+                                    value={'Nam'}
                                     checked={data.gender === 'Nam' ? true : false}
                                     onChange={(e) => onChangeInput('gender', e.target.value)}
                                 />
@@ -193,7 +197,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                                     id="employeeFemaleGender"
                                     name="gender"
                                     type="radio"
-                                    value={'female'}
+                                    value={'Nữ'}
                                     checked={data.gender === 'Nữ' ? true : false}
                                     onChange={(e) => onChangeInput('gender', e.target.value)}
                                 />
@@ -206,6 +210,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                             valueInput={data.empPhone}
                             idInput={'employeePhone'}
                             onChange={(e) => onChangeInput('empPhone', e.target.value)}
+                            readOnly={isAdmin ? false : true}
                         />
                     </div>
                     <FormGroup
@@ -215,6 +220,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                         valueInput={data.empAddress}
                         idInput={'employeeAddress'}
                         onChange={(e) => onChangeInput('empAddress', e.target.value)}
+                        readOnly={isAdmin ? false : true}
                     />
 
                     <div className={cx('row')}>
@@ -225,6 +231,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                             valueInput={data.empStartDate}
                             idInput={'employeeStartDate'}
                             onChange={(e) => onChangeInput('empStartDate', e.target.value)}
+                            readOnly={isAdmin ? false : true}
                         />
 
                         <div className={cx('form-group')}>
@@ -252,7 +259,7 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                             valueInput={data.empRole}
                             idInput={'employeeRole'}
                             onChange={(e) => onChangeInput('employeeRole', e.target.value)}
-                            isAdmin={isAdmin}
+                            readOnly={isAdmin ? false : true}
                         >
                             
                                 <Tippy content={'Xem tất cả quyền'}>

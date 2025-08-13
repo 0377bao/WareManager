@@ -16,6 +16,9 @@ import ModalOrder from './ModalOrder';
 import ProductDetail from './ProductDetail';
 import ProductEdit from './ProductEdit';
 import ModalEmployee from './ModalEmployee';
+import ModelFilter from "./ModelFilter"
+import ModalUpdate from "./ModalUpdate"
+import ModalCreateAccount from './ModalCreateAccount';
 
 export {
     GlobalStyle,
@@ -35,5 +38,8 @@ export {
     ProductDetail,
     ProductEdit,
     ModalOrder,
-    ModalEmployee
+    ModalEmployee,
+    ModelFilter,
+    ModalUpdate,
+    ModalCreateAccount
 };
