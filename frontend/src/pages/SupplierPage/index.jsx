@@ -6,6 +6,7 @@ import styles from './SupplierPage.module.scss';
 import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 import Tippy from '@tippyjs/react';
 import ModalUpdate from '../../components/ModalUpdate';
+import { ModelFilter } from '../../components';
 const cxGlobal = classNames.bind(globalStyle);
 
 const cx = classNames.bind(styles);
@@ -148,16 +149,39 @@ const SupplierPage = () => {
         });
     }
 
+    const columnsFilter = [
+        {
+            id: 1,
+            label: "Mã nhà cung cấp",
+            value: ""
+        },
+        {
+            id: 2,
+            label: "Số điện thoại",
+            value: ""
+        },
+        {
+            id: 3, 
+            label: 'Email',
+            value: ''
+        }
+    ]
+
     return (
         <div className={cx('wrapper-report')}>
-            <div className={cx('header')}>
+            <ModelFilter columns={columnsFilter}>
+                <Button primary>
+                    <span>Thêm nhà cung cấp</span>
+                </Button>
+            </ModelFilter>
+            {/* <div className={cx('header')}>
                 <Popper>
                     <div>
-                        {/* <span className={cx('title')}>Tên khách hàng</span>
-                        <input type="text" className={cx('input')} placeholder="Nhập tên khách hàng" /> */}
+                        <span className={cx('title')}>Tên khách hàng</span>
+                        <input type="text" className={cx('input')} placeholder="Nhập tên khách hàng" />
                     </div>
                 </Popper>
-            </div>
+            </div> */}
             <div className={cx('content')}>
                 <MyTable
                     currentPage={page}

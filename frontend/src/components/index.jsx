@@ -19,6 +19,8 @@ import ModalEmployee from './ModalEmployee';
 import ModelFilter from "./ModelFilter"
 import ModalUpdate from "./ModalUpdate"
 import ModalCreateAccount from './ModalCreateAccount';
+import CategoryList from './CategoryList';
+import ModalCreateCategory from './ModalCreateCategory';
 
 export {
     GlobalStyle,
@@ -41,5 +43,7 @@ export {
     ModalEmployee,
     ModelFilter,
     ModalUpdate,
-    ModalCreateAccount
+    ModalCreateAccount,
+    CategoryList,
+    ModalCreateCategory
 };

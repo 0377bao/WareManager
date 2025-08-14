@@ -5,9 +5,10 @@ import styles from './ProductPage.module.scss';
 import MyTable from '../../components/MyTable';
 import Tippy from '@tippyjs/react';
 import { Eye, PencilIcon } from 'lucide-react';
-import { ProductDetail, ProductEdit } from '../../components';
+import { ProductDetail, ProductEdit, ModelFilter, Button, CategoryList, ModalCreateCategory } from '@/components';
 import { useDispatch } from 'react-redux';
 import { startLoading, stopLoading } from '../../lib/redux/loading/slice';
+import toast from 'react-hot-toast';
 
 const cx = classNames.bind(styles);
 
@@ -64,6 +65,25 @@ const api = () => {
     });
 };
 
+const columnsModelFilter = [
+    {
+        id: 1, 
+        label: "Mã sản phẩm",
+        value: "" 
+    },
+    {
+        id: 2, 
+        label: "Tên sản phẩm",
+        value: "" 
+    },
+    {
+        id: 3, 
+        label: "Tồn kho tối thiểu",
+        value: "" 
+    }
+    
+]
+
 const ProductPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [action, setAction] = useState({
@@ -71,6 +91,7 @@ const ProductPage = () => {
         actionName: '',
     });
     const [productData, setProductData] = useState(null);
+    const [showModalCreateCategory, setShowModalCreateCategory] = useState(false)
     const dispatch = useDispatch();
 
     const handleOnChange = useCallback((page, pageSize) => {
@@ -153,8 +174,28 @@ const ProductPage = () => {
         },
     ];
 
+    const handleOpenModalCreateCategory = () => {
+        setShowModalCreateCategory(prev => !prev)
+    }
+
+    const handleCreateCategory = async (category) => {
+        try{
+            // call api create category
+
+            // fetch again list category
+        }catch(err) {
+            toast.error(err)
+            return;
+        }
+    }
     return (
         <div className={cx('wrapper-product')}>
+            <ModelFilter columns={columnsModelFilter}>
+                <Button primary onClick={handleOpenModalCreateCategory}>
+                    <span>Thêm nhóm sản phẩm</span>
+                </Button>
+            </ModelFilter>
+            <CategoryList/>
             <h1>Danh sách sản phẩm</h1>
             <MyTable
                 className={cx('my-table')}
@@ -175,6 +216,7 @@ const ProductPage = () => {
             {action.productId && action.actionName === 'edit' && (
                 <ProductEdit data={productData} onClose={() => setAction({ productId: null, actionName: null })} />
             )}
+            {showModalCreateCategory && <ModalCreateCategory handleCreate={handleCreateCategory} onClose={handleOpenModalCreateCategory}/>}
         </div>
     );
 };
