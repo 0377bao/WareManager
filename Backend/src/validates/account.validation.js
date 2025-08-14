@@ -136,18 +136,17 @@ const checkSignUpValidate = [
         .withMessage('Danh sách vai trò là bắt buộc và phải là mảng')
         .bail()
         .custom((roles) => {
-            const invalidRoles = roles.filter((role) => !ALLOWED_ROLES.includes(role));
+            console.log(roles);
+
+            const invalidRoles = roles.filter((role) => !ALLOWED_ROLES.includes(role.roleName));
             if (invalidRoles.length > 0) {
                 throw new Error(`Các vai trò không hợp lệ: ${invalidRoles.join(', ')}`);
             }
             return true;
         }),
-    body('warehouseId')
-        .notEmpty()
-        .withMessage('Warehouse ID là bắt buộc')
-        .bail()
-        .isMongoId()
-        .withMessage('Warehouse ID không hợp lệ'),
+    body('warehouseId').notEmpty().withMessage('Warehouse ID là bắt buộc').bail(),
+    // .isMongoId()
+    // .withMessage('Warehouse ID không hợp lệ'),
 ];
 
 const checkSignInValidate = [

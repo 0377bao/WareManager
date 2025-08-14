@@ -44,8 +44,9 @@ const authUser = async (req, res, next) => {
 
 const authUserIsManager = async (req, res, next) => {
     try {
-        const employeeID = req.body.employeeID ? req.body.employeeID : req.query.employeeID;
-        const warehouseId = req.body.warehouseId ? req.body.warehouseId : req.query.warehouseId;
+        const employeeID = req.headers['employeeid'];
+        const warehouseId = req.headers['warehouseid'];
+
         const token = req.headers.token;
         if (token) {
             const accessToken = token.split(' ')[1];
@@ -61,18 +62,24 @@ const authUserIsManager = async (req, res, next) => {
                         status: 'ERR',
                         message: 'Employee ID không trùng với token',
                     });
-                } else if (user.payload.role !== 'SYSTEM_ADMIN' && user.payload.role !== 'WARE_MANAGER') {
-                    return res.status(HTTP_FORBIDDEN).json({
-                        status: 'ERR',
-                        message: 'Bạn không có quyền truy cập tài nguyên này',
-                    });
-                } else if (user.payload.role == 'WARE_MANAGER' && user.payload.warehouseId !== warehouseId) {
-                    return res.status(HTTP_FORBIDDEN).json({
-                        status: 'ERR',
-                        message: 'Bạn không có quyền truy cập kho này',
-                    });
                 } else {
-                    next();
+                    const hasWareManagerRole = user.payload.roles.some((role) => role.roleName === 'WARE_MANAGER');
+
+                    const hasSysAdminRole = user.payload.roles.some((role) => role.roleName === 'SYSTEM_ADMIN');
+
+                    if (!hasSysAdminRole && !hasWareManagerRole) {
+                        return res.status(HTTP_FORBIDDEN).json({
+                            status: 'ERR',
+                            message: 'Bạn không có quyền truy cập tài nguyên này',
+                        });
+                    } else if (hasWareManagerRole && user.payload.warehouseId !== warehouseId) {
+                        return res.status(HTTP_FORBIDDEN).json({
+                            status: 'ERR',
+                            message: 'Bạn không có quyền truy cập kho này',
+                        });
+                    } else {
+                        next();
+                    }
                 }
             });
         } else {

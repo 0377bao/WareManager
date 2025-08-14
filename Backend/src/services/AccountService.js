@@ -11,6 +11,7 @@ dotenv.config();
 
 const HTTP_OK = process.env.HTTP_OK;
 const HTTP_NOT_FOUND = process.env.HTTP_NOT_FOUND;
+const HTTP_BAD_REQUEST = process.env.HTTP_BAD_REQUEST;
 const HTTP_UNAUTHORIZED = process.env.HTTP_UNAUTHORIZED;
 
 class AccountService {
@@ -26,14 +27,14 @@ class AccountService {
                     resolve({
                         status: 'OK',
                         statusHttp: HTTP_OK,
-                        message: 'Email already exists',
+                        message: 'Email đã tồn tại',
                         isExists: true,
                     });
                 } else {
                     resolve({
                         status: 'OK',
                         statusHttp: HTTP_OK,
-                        message: 'Email does not exist',
+                        message: 'Email không tồn tại',
                         isExists: false,
                     });
                 }
@@ -47,6 +48,7 @@ class AccountService {
         return new Promise(async (resolve, reject) => {
             try {
                 const {
+                    employeeID,
                     email,
                     password,
                     statusWork,
@@ -65,42 +67,62 @@ class AccountService {
 
                 const accountFind = await Account.findAll({
                     where: {
-                        phone,
+                        email,
                     },
                 });
                 if (accountFind.length !== 0) {
                     resolve({
+                        statusHttp: HTTP_BAD_REQUEST,
                         status: 'ERR',
-                        message: 'Phone number already exists',
+                        message: 'Email đã tồn tại',
                     });
                 } else {
                     const hash = bcrypt.hashSync(password, 10);
-                    const user = await User.create({
-                        name: userName,
-                        avatar,
+                    const employee = await Employee.create({
+                        employeeID,
+                        employeeName,
+                        image,
+                        cccd,
                         dob,
+                        phoneNumber,
                         gender,
-                    });
-
-                    const accessToken = await generateAccessToken({
-                        userID: user.userID,
-                        phone,
-                    });
-
-                    const refreshToken = await generateRefreshToken({
-                        userID: user.userID,
-                        phone,
+                        address,
+                        startDate,
+                        endDate,
+                        warehouseId,
                     });
 
                     const account = await Account.create({
-                        phone,
-                        password: hash,
-                        refreshToken,
-                        userID: user.userID,
+                        email,
+                        password,
+                        statusWork,
+                        employeeID: employee.employeeID,
+                    });
+
+                    roles.forEach(async (role) => {
+                        await AccountRoles.create({
+                            accountID: account.accountID,
+                            roleID: role.roleID,
+                        });
+                    });
+
+                    const accessToken = await generateAccessToken({
+                        employeeID: employee.employeeID,
+                        email: account.email,
+                        roles,
+                        warehouseId,
+                    });
+
+                    const refreshToken = await generateRefreshToken({
+                        employeeID: employee.employeeID,
+                        email: account.email,
+                        roles,
+                        warehouseId,
                     });
                     resolve({
+                        statusHttp: HTTP_OK,
                         status: 'OK',
-                        message: 'Create account successfully',
+                        message: 'Tạo tài khoản thành công',
                         accessToken,
                         refreshToken,
                     });
@@ -124,7 +146,7 @@ class AccountService {
                 if (accountFind.length === 0) {
                     resolve({
                         status: 'ERR',
-                        message: 'Email does not exists',
+                        message: 'Email không tồn tại',
                         statusHttp: HTTP_NOT_FOUND,
                     });
                 } else {
@@ -132,7 +154,7 @@ class AccountService {
                     if (!comparePassword) {
                         resolve({
                             status: 'ERR',
-                            message: 'Incorrect password',
+                            message: 'Mật khẩu không chính xác',
                             statusHttp: HTTP_UNAUTHORIZED,
                         });
                     } else {
@@ -147,12 +169,24 @@ class AccountService {
                             roles.map((role) => Role.findOne({ where: { roleID: role.roleId } })),
                         );
 
-                        console.log(roleNames);
-
                         if (!roleNames) {
                             resolve({
                                 status: 'ERR',
-                                message: 'Employee does not exist',
+                                message: 'Không tìm thấy vai trò',
+                                statusHttp: HTTP_NOT_FOUND,
+                            });
+                        }
+
+                        const employee = await Employee.findOne({
+                            where: {
+                                employeeID: accountFind[0].employeeID,
+                            },
+                        });
+
+                        if (!employee) {
+                            resolve({
+                                status: 'ERR',
+                                message: 'Không tìm thấy nhân viên',
                                 statusHttp: HTTP_NOT_FOUND,
                             });
                         }
@@ -160,17 +194,19 @@ class AccountService {
                         const accessToken = await generateAccessToken({
                             employeeID: accountFind[0].employeeID,
                             email: accountFind[0].email,
-                            role: roleNames.map((role) => role.roleName),
+                            roles: roleNames,
+                            warehouseId: employee.warehouseId,
                         });
 
                         const refreshToken = await generateRefreshToken({
                             employeeID: accountFind[0].employeeID,
                             email: accountFind[0].email,
-                            role: roleNames.map((role) => role.roleName),
+                            roles: roleNames,
+                            warehouseId: employee.warehouseId,
                         });
                         resolve({
                             status: 'OK',
-                            message: 'Login successfully',
+                            message: 'Đăng nhập thành công',
                             statusHttp: HTTP_OK,
                             accessToken,
                             refreshToken,
