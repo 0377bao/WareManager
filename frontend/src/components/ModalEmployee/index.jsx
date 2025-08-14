@@ -5,16 +5,10 @@ import { Button, Image, Modal } from '@/components';
 import { Eye, XCircle, ArrowRightLeft } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import md5 from "md5"
+import { mapperRole } from '../../constants';
 
 const cx = classNames.bind(styles);
 const roleEmployee = ['Quản trị viên', 'Quản lý kho', 'Nhân viên nhận hàng', 'Nhân viên xuất hàng', 'Kế toán'];
-const mapperRole = {
-    'Quản trị viên': 'SYSTEM_ADMIN',
-    'Quản lý kho': 'WARE_MANAGER',
-    'Nhân viên nhận hàng': 'STOCK_RECEIVER',
-    'Nhân viên xuất hàng': 'STOCK_DISPATCHER',
-    'Kế toán': 'ACCOUNTANT',
-};
 
 const FormGroup = ({
     labelTitle,
@@ -43,7 +37,7 @@ const FormGroup = ({
     );
 };
 
-const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) => {
+const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, profile=false }) => {
     const [listWarehouseId, setListWarehouseId] = useState(['K01', 'K02', 'K03']);
     const [viewDetailRole, setViewDetailRole] = useState(false);
     const [listRoleUser, setListRoleUser] = useState([]);
@@ -125,9 +119,9 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData }) =>
                         alt={'image-employee'}
                     />
                     <input ref={imageRef} type="file" hidden onChange={handlePreviewImage} />
-                    <Button className={cx('btn-upload')} primary onClick={handleUploadImage}>
+                    {!profile && <Button className={cx('btn-upload')} primary onClick={handleUploadImage}>
                         <span>Tải ảnh lên</span>
-                    </Button>
+                    </Button>}
                 </div>
                 <div className={cx('info')}>
                     <div className={cx('row')}>

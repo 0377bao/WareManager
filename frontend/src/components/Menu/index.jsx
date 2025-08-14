@@ -17,7 +17,7 @@ const Menu = ({ children, menuItems = [] }) => {
                     <Header/>
                     {menuItems.length > 0 &&
                         menuItems.map((item, index) => (
-                            <MenuItem key={index} title={item.title} Icon={item.Icon} path={item.path} />
+                            <MenuItem key={index} title={item.title} Icon={item.Icon} to={item.to} onClick={item.onClick}/>
                         ))}
                 </Popper>
             </div>

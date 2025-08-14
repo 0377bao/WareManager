@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import Button from '@/components/Button';
@@ -6,9 +6,13 @@ import { Eye, EyeClosed, Mail } from 'lucide-react';
 import logo from '@/assets/logo_v2.jpg';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { get } from '@/utils/httpRequest';
+import { post } from '@/utils/httpRequest';
 import { useNavigate } from 'react-router-dom';
 import { styleMessage } from '../../constants';
+import { useDispatch } from 'react-redux';
+import { login } from '@/lib/redux/auth/authSlice';
+import { jwtDecode } from 'jwt-decode';
+import EmployeeDTO from '../../dtos/EmployeeDTO';
 
 const cx = classNames.bind(styles);
 const softwareName = import.meta.env.VITE_SOFTWARE_NAME;
@@ -26,6 +30,7 @@ const Login = () => {
         },
     });
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleShowPassword = () => {
         setShowPassword((prev) => !prev);
@@ -33,18 +38,36 @@ const Login = () => {
 
     const submitData = async (data) => {
         try {
-            // eslint-disable-next-line no-unused-vars
-            const response = await get('/login', { data });
-            toast.success('Login successfully', {
-                ...styleMessage,
-            });
-            // lưu thông tin vào redux
-            // chuyển vào trang chính
-            navigate('/');
+            const responseLogin = await post('/api/account/sign-in', { ...data });
+           
+            if (responseLogin.status == 'OK') {
+                const { message, accessToken, refreshToken } = responseLogin;
+                const { employeeID, role } = jwtDecode(accessToken).payload;
+
+                // call api get user detail
+                const responseUser = await post('/api/employee/employee-detail', 
+                    {
+                        email: data.email,
+                        employeeID,
+                    },
+                    accessToken
+                );
+                const { employee } = responseUser;
+               
+                dispatch(login({...new EmployeeDTO({...employee, role})}));
+                localStorage.setItem('tokenUser', JSON.stringify({ accessToken, refreshToken }));
+                toast.success(message, {
+                    ...styleMessage,
+                });
+                // lưu thông tin vào redux
+                // chuyển vào trang chính
+                navigate('/');
+            }
         } catch (error) {
-            toast.error(error, {
-                ...styleMessage,
-            });
+            console.log(error);
+            // toast.error(error, {
+            //     ...styleMessage,
+            // });
             return;
         }
     };
@@ -97,12 +120,6 @@ const Login = () => {
                     <Button className={cx('btn-submit')} text medium type="submit">
                         Đăng nhập
                     </Button>
-                    <p className={cx('other')}>
-                        Don't have account?{' '}
-                        <Button text className={cx('link-register')} to={'/register'}>
-                            Đăng ký
-                        </Button>
-                    </p>
                 </form>
             </div>
             <div className={cx('image-preview')} style={{ backgroundImage: `url(${logo})` }}></div>

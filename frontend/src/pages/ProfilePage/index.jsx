@@ -1,25 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ModalEmployee, Button } from '@/components';
+import { useSelector } from 'react-redux';
 
 
 const ProfilePage = () => {
-    const [currentUser, setCurrentUser] = useState({
-            empId: '',
-            empName: '',
-            empCCCD: '',
-            empDob: '',
-            gender: '',
-            empPhone: '',
-            empAddress: '',
-            empStartDate: '',
-            warehouseId: '',
-            empRole: '',
-            empStatus: '',
-            empImage: '',
-    })
+    const currentUser = useSelector(state => state.AuthSlice.user)
 
     return (
-            <ModalEmployee isAdmin={false} data={currentUser} setData={setCurrentUser}/>  
+            <ModalEmployee isAdmin={false} data={currentUser} profile={true}/>  
     );
 }
 

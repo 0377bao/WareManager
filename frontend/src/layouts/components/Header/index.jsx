@@ -1,10 +1,12 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CircleUserRound, UserCircle2, LogOut, Bell } from 'lucide-react';
 import { Menu, Notification } from '@/components';
 import { Search } from '@/components';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../lib/redux/auth/authSlice';
 
 const cx = classNames.bind(styles);
 
@@ -25,17 +27,24 @@ const Header = ({ children }) => {
         '/manage-warehouse': 'Quản lý kho',
         '/customer': 'Khách hàng',
     };
-
+    
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const menuItems = [
         {
             title: 'Thông tin cá nhân',
             Icon: UserCircle2,
-            path: '/profile',
+            to: '/profile',
         },
         {
             title: 'Đăng xuất',
             Icon: LogOut,
             path: '/login',
+            onClick: () => {
+                dispatch(logout())
+                localStorage.setItem('tokenUser', null)
+                navigate('/login')
+            }
         },
     ];
     return (

@@ -2,10 +2,13 @@ import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import Image from '../../Image';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 const Header = () => {
+    const currentUser = useSelector(state => state.AuthSlice.user) 
+   
     return (
         <div className={cx('wrapper-header-menu')}>
             <Image
@@ -16,8 +19,8 @@ const Header = () => {
                 }
             />
             <div className={cx('header-content')}>
-                <p className={cx('title')}>Van Nam</p>
-                <p className={cx('user-id')}>ID: NV#213</p>
+                <p className={cx('title')}>{currentUser.empName}</p>
+                <p className={cx('user-id')}>ID: {currentUser.empId}</p>
             </div>
         </div>
     );
