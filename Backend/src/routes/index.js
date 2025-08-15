@@ -13,6 +13,7 @@ const OrderReleaseRouter = require('./OrderReleaseRouter');
 const OrderPurchaseRouter = require('./OrderPurchaseRouter');
 const OrderTransferRouter = require('./OrderTransferRouter');
 const EmployeeRouter = require('./EmployeeRouter');
+const UploadRouter = require('./UploadRouter')
 
 const router = (app) => {
     app.use("/api/account", AccountRouter);
@@ -30,6 +31,7 @@ const router = (app) => {
     app.use("/api/order-purchase", OrderPurchaseRouter);
     app.use("/api/order-transfer", OrderTransferRouter);
     app.use("/api/employee", EmployeeRouter);
+    app.use("/api/image", UploadRouter);
 }
 
 module.exports = router;
