@@ -44,8 +44,8 @@ const authUser = async (req, res, next) => {
 
 const authUserIsManager = async (req, res, next) => {
     try {
-        const employeeID = req.headers['employeeID'];
-        const warehouseID = req.headers['warehouseID'];
+        const employeeID = req.headers['employeeid'];
+        const warehouseID = req.headers['warehouseid'];
 
         const token = req.headers.token;
         if (token) {

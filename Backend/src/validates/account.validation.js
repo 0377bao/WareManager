@@ -119,18 +119,18 @@ const checkSignUpValidate = [
             }
             return true;
         }),
-    body('endDate')
-        .isDate()
-        .withMessage('Ngày kết thúc không hợp lệ')
-        .bail()
-        .custom((value, { req }) => {
-            const startDate = new Date(req.body.startDate);
-            const endDate = new Date(value);
-            if (endDate <= startDate) {
-                throw new Error('Ngày kết thúc phải sau ngày bắt đầu');
-            }
-            return true;
-        }),
+    // body('endDate')
+    //     .isDate()
+    //     .withMessage('Ngày kết thúc không hợp lệ')
+    //     .bail()
+    //     .custom((value, { req }) => {
+    //         const startDate = new Date(req.body.startDate);
+    //         const endDate = new Date(value);
+    //         if (endDate <= startDate) {
+    //             throw new Error('Ngày kết thúc phải sau ngày bắt đầu');
+    //         }
+    //         return true;
+    //     }),
     body('roles')
         .isArray({ min: 1 })
         .withMessage('Danh sách vai trò là bắt buộc và phải là mảng')

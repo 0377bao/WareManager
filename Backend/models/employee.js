@@ -42,7 +42,7 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.DATE,
                 allowNull: true,
             },
-            warehouseId: {
+            warehouseID: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },

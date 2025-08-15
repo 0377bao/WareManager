@@ -1,13 +1,19 @@
-module.exports = (sequelize, Sequelize) => {
-    const Supplier = sequelize.define(
-        'Supplier',
-        {
-            supplierID: {
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    await queryInterface.createTable('warehouses', {
+            warehouseId: {
                 type: Sequelize.STRING,
                 primaryKey: true,
                 allowNull: false,
             },
-            supplierName: {
+            warehouseName: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            faxNumber: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
@@ -15,20 +21,14 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            phoneNumber: {
+            status: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            email: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                unique: true,
-            },
-        },
-        { tableName: 'suppliers', timestamps: false },
-    );
+    })
+  },
 
-    Supplier.associate = (models) => {};
-
-    return Supplier;
+  async down (queryInterface, Sequelize) {
+    await queryInterface.dropTable('warehouses')
+  }
 };

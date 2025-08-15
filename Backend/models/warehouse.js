@@ -1,13 +1,17 @@
 module.exports = (sequelize, Sequelize) => {
-    const Supplier = sequelize.define(
-        'Supplier',
+    const Warehouse = sequelize.define(
+        'Warehouse',
         {
-            supplierID: {
+            warehouseID: {
                 type: Sequelize.STRING,
                 primaryKey: true,
                 allowNull: false,
             },
-            supplierName: {
+            warehouseName: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            faxNumber: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
@@ -15,20 +19,18 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            phoneNumber: {
+            status: {
                 type: Sequelize.STRING,
                 allowNull: false,
-            },
-            email: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                unique: true,
             },
         },
-        { tableName: 'suppliers', timestamps: false },
+        {
+            tableName: 'warehouses',
+            timestamps: false,
+        },
     );
 
-    Supplier.associate = (models) => {};
+    Warehouse.associate = (models) => {};
 
-    return Supplier;
+    return Warehouse;
 };
