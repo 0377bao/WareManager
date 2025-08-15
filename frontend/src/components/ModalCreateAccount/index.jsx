@@ -10,7 +10,7 @@ import { styleMessage } from '../../constants';
 const cx = classNames.bind(styles);
 
 
-const ModalCreateAccount = ({ isOpen, onClose }) => {
+const ModalCreateAccount = ({ isOpen, onClose, setAccount, setStatusCreateAccount }) => {
     const {
         register,
         formState: { errors },
@@ -29,7 +29,10 @@ const ModalCreateAccount = ({ isOpen, onClose }) => {
 
         if (email && password) {
             // call api
+            setAccount(prev => ({...prev, email: email, password: password}))
+            setStatusCreateAccount(true)
             toast.success("Tạo tài khoản thành công", styleMessage)
+            onClose()
         }
     };
 
@@ -78,7 +81,7 @@ const ModalCreateAccount = ({ isOpen, onClose }) => {
                             <span>Tiếp tục</span>
                         </Button>
                     </div>
-                    <div className={cx('wrapper-verify-email')}>
+                    {/* <div className={cx('wrapper-verify-email')}>
                         <h2>Xác thực email</h2>
                         <p className={cx('des-email')}>Hệ thống đã gửi mã xác nhận đến email của bạn. Vui lòng nhập mã xác nhận vào bên dưới</p>
                         <input
@@ -101,7 +104,7 @@ const ModalCreateAccount = ({ isOpen, onClose }) => {
                                 <span>Tiếp tục</span>
                             </Button>
                         </div>
-                    </div>
+                    </div> */}
                     <div className={cx('wrapper-password')}>
                         <div className={cx('form-group')}>
                             <label htmlFor="password">Nhập mật khẩu</label>
@@ -153,7 +156,7 @@ const ModalCreateAccount = ({ isOpen, onClose }) => {
                             {errors.retypedPassword && <p className={cx('message-error')}>{errors.retypedPassword.message}</p>}
                         </div>
                         <div className={cx('footer-action')}>
-                            <Button type="button" primary onClick={() => handleScrollX(phaseContent, -1, 'back')}>
+                            <Button type="button" primary onClick={() => handleScrollX(phaseContent, 0, 'back')}>
                                 <span>Quay lại</span>
                             </Button>
                             <Button type="submit" primary>

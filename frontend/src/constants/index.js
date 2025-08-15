@@ -5,11 +5,26 @@ export const styleMessage = {
 };
 
 export const mapperRole = {
-    'Quản trị viên': 'SYSTEM_ADMIN',
-    'Quản lý kho': 'WARE_MANAGER',
-    'Nhân viên nhận hàng': 'STOCK_RECEIVER',
-    'Nhân viên xuất hàng': 'STOCK_DISPATCHER',
-    'Kế toán': 'ACCOUNTANT',
+    'Quản trị viên': {
+        roleID: 1,
+        roleName: 'SYSTEM_ADMIN'
+    },
+    'Quản lý kho': {
+        roleID: 2,
+       roleName: 'WARE_MANAGER'
+    },
+    'Nhân viên nhận hàng': {
+        roleID:3,
+        roleName: 'STOCK_RECEIVER'
+    },
+    'Nhân viên xuất hàng': {
+        roleID: 4,
+        roleName:'STOCK_DISPATCHER'
+    },
+    'Kế toán': {
+        roleID: 5,
+        roleName: 'ACCOUNTANT'
+    },
 };
 
 export const formatRole = {

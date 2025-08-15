@@ -4,11 +4,13 @@ import styles from './ModalEmployee.module.scss';
 import { Button, Image, Modal } from '@/components';
 import { Eye, XCircle, ArrowRightLeft } from 'lucide-react';
 import Tippy from '@tippyjs/react';
-import md5 from "md5"
-import { mapperRole } from '../../constants';
+import md5 from 'md5';
+import { formatRole, mapperRole } from '../../constants';
+import request from "@/utils/httpRequest"
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
-const roleEmployee = ['Quản trị viên', 'Quản lý kho', 'Nhân viên nhận hàng', 'Nhân viên xuất hàng', 'Kế toán'];
+const roleEmployee = ['Quản lý kho', 'Nhân viên nhận hàng', 'Nhân viên xuất hàng', 'Kế toán'];
 
 const FormGroup = ({
     labelTitle,
@@ -37,10 +39,12 @@ const FormGroup = ({
     );
 };
 
-const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, profile=false }) => {
+const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, profile = false, action }) => {
     const [listWarehouseId, setListWarehouseId] = useState(['K01', 'K02', 'K03']);
     const [viewDetailRole, setViewDetailRole] = useState(false);
-    const [listRoleUser, setListRoleUser] = useState([]);
+    //const [listRoleUser, setListRoleUser] = useState([]);
+    const listRoleUser = data.empRole || [];
+    const currentUser = useSelector(state => state.AuthSlice.user)
 
     const imageRef = useRef();
     const handleUploadImage = () => {
@@ -63,8 +67,8 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
     };
 
     const handleCreateEmployeeId = useCallback(() => {
-        const salt = md5(Date.now()).slice(-5)
-        setData(prev => ({...prev, empId: `NV${salt}`}))
+        const salt = md5(Date.now()).slice(-5);
+        setData((prev) => ({ ...prev, empId: `NV${salt}` }));
         // return empId
     }, []);
 
@@ -72,39 +76,70 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
         setViewDetailRole((prev) => !prev);
     };
 
-    useEffect(() => {
-        if (data && data.empRole !== "") {
-            setListRoleUser(data.empRole.split(','));
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data && data.empRole !== "") {
+    //         setListRoleUser(data.empRole.split(','));
+    //     }
+    // }, []);
 
     useEffect(() => {
         //fetch all warehouse
-    }, [listWarehouseId]);
+        const fetchWarehouseList = async () => {
+            const token = JSON.parse(localStorage.getItem('tokenUser'))
+            
+            try{
+                const response = await request.get('/api/warehouse/list', {
+                    headers: {
+                        token: `Beare ${token.accessToken}`,
+                        employeeid: currentUser.empId
+                    }
+                })
+                const formatWarehouseId = response.data.warehouses.map(ware => ware.warehouseID)
+                setListWarehouseId(formatWarehouseId)
+            }catch(err) {
+                setListWarehouseId([])
+            }
+        }
+
+        fetchWarehouseList()
+    }, []);
 
     const handleAddNewRole = (e) => {
         if (e.target.checked) {
-            if (!listRoleUser.includes(e.target.value)) setListRoleUser((prev) => [...prev, e.target.value]);
+            if (!listRoleUser.includes(e.target.value))
+                setData((prev) => {
+                const updateListRole = [...listRoleUser, mapperRole[e.target.value]]
+                return ({
+                    ...prev,
+                    empRole: updateListRole
+                })});
         } else {
             if (listRoleUser.includes(e.target.value)) {
-                setListRoleUser((prev) => prev.filter((role) => role !== e.target.value));
+                setData((prev) => ({
+                    ...prev,
+                    empRole: listRoleUser.filter((item) => item.roleName != mapperRole[e.target.value].roleName)
+                }));
             }
         }
     };
 
-    const handleUpdateRoleEmployee = useCallback(async () => {
-        try {
-            // call api update
-        } catch (err) {
-            // throw err
+    const handleUpdateRoleEmployee = () => {
+        if (action == 'add') {
+            //console.log(listRoleUser);
+            setData((prev) => ({ ...prev, empRole: listRoleUser}));
+            handleShowViewDetailRole();
+        } else {
+            //
         }
-    }, []);
+    };
 
     return (
         <div className={cx('modal-employee-info')}>
             <div className={cx('modal-header')}>
                 <h1>Thông tin nhân viên</h1>
-                {location.pathname === "/auth" && <XCircle size={22} className={cx('btn-close-modal')} onClick={onClose} />}
+                {location.pathname === '/auth' && (
+                    <XCircle size={22} className={cx('btn-close-modal')} onClick={onClose} />
+                )}
             </div>
 
             <div className={cx('content')}>
@@ -119,9 +154,11 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
                         alt={'image-employee'}
                     />
                     <input ref={imageRef} type="file" hidden onChange={handlePreviewImage} />
-                    {!profile && <Button className={cx('btn-upload')} primary onClick={handleUploadImage}>
-                        <span>Tải ảnh lên</span>
-                    </Button>}
+                    {!profile && (
+                        <Button className={cx('btn-upload')} primary onClick={handleUploadImage}>
+                            <span>Tải ảnh lên</span>
+                        </Button>
+                    )}
                 </div>
                 <div className={cx('info')}>
                     <div className={cx('row')}>
@@ -250,16 +287,14 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
                             labelTitle={'Chức vụ'}
                             htmlForLabel={'employeeRole'}
                             typeInput={'text'}
-                            valueInput={data.empRole}
+                            valueInput={data.empRole.map(role => formatRole[role.roleName])}
                             idInput={'employeeRole'}
                             onChange={(e) => onChangeInput('employeeRole', e.target.value)}
                             readOnly={isAdmin ? false : true}
                         >
-                            
-                                <Tippy content={'Xem tất cả quyền'}>
-                                    <Eye size={22} className={cx('view-detail')} onClick={handleShowViewDetailRole}/>
-                                </Tippy>
-                            
+                            <Tippy content={'Xem tất cả quyền'}>
+                                <Eye size={22} className={cx('view-detail')} onClick={handleShowViewDetailRole} />
+                            </Tippy>
                         </FormGroup>
                         <div className={cx('form-group')}>
                             <label htmlFor="employeeStatus">Trạng thái</label>
@@ -284,15 +319,17 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
             </div>
 
             <Modal isOpenInfo={viewDetailRole} onClose={handleShowViewDetailRole}>
-                <div className={cx('wrapper-role-employee', {
-                    admin: isAdmin
-                })}>
+                <div
+                    className={cx('wrapper-role-employee', {
+                        admin: isAdmin,
+                    })}
+                >
                     <div className={cx('wrapper-view-role')}>
                         <h2>Các quyền truy cập hiện có</h2>
                         <div className={cx('view-role')}>
                             {listRoleUser.map((item, index) => (
                                 <div className={cx('role-item')} key={index}>
-                                    <span className={cx('role-title')}>{item}</span>
+                                    <span className={cx('role-title')}>{formatRole[item.roleName]}</span>
                                 </div>
                             ))}
                         </div>
@@ -309,7 +346,9 @@ const ModalEmployee = ({ isAdmin = false, data, children, onClose, setData, prof
                                                 type="checkbox"
                                                 value={item}
                                                 onChange={handleAddNewRole}
-                                                checked={listRoleUser.includes(item)}
+                                                checked={
+                                                    data.empRole.find(role => formatRole[role.roleName] == item)
+                                                }
                                             />
                                             <span className={cx('role-title')}>{item}</span>
                                         </div>

@@ -9,10 +9,11 @@ export const get = async (path, options = {}) => {
     return response.data;
 };
 
-export const post = async (path, options = {}, token) => {
+export const post = async (path, options = {}, token, employeeID) => {
     const response = await request.post(path, options, {
         headers: {
-            token: `Beare ${token}`
+            token: `Beare ${token}`,
+            employeeid: employeeID,
         }
     });
     return response.data;

@@ -42,7 +42,7 @@ const Login = () => {
            
             if (responseLogin.status == 'OK') {
                 const { message, accessToken, refreshToken } = responseLogin;
-                const { employeeID, role } = jwtDecode(accessToken).payload;
+                const { employeeID, roles } = jwtDecode(accessToken).payload;
 
                 // call api get user detail
                 const responseUser = await post('/api/employee/employee-detail', 
@@ -54,8 +54,8 @@ const Login = () => {
                 );
                 const { employee } = responseUser;
                
-                dispatch(login({...new EmployeeDTO({...employee, role})}));
-                localStorage.setItem('tokenUser', JSON.stringify({ accessToken, refreshToken }));
+                dispatch(login({...new EmployeeDTO({...employee, roles})}));
+                localStorage.setItem('tokenUser', JSON.stringify({ email: data.email, employeeID, accessToken, refreshToken }));
                 toast.success(message, {
                     ...styleMessage,
                 });
