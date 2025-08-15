@@ -62,7 +62,7 @@ class AccountService {
                     startDate,
                     endDate,
                     roles,
-                    warehouseId,
+                    warehouseID,
                 } = newAccount;
 
                 const accountFind = await Account.findAll({
@@ -89,12 +89,12 @@ class AccountService {
                         address,
                         startDate,
                         endDate,
-                        warehouseId,
+                        warehouseID,
                     });
 
                     const account = await Account.create({
                         email,
-                        password,
+                        password: hash,
                         statusWork,
                         employeeID: employee.employeeID,
                     });
@@ -110,14 +110,14 @@ class AccountService {
                         employeeID: employee.employeeID,
                         email: account.email,
                         roles,
-                        warehouseId,
+                        warehouseID,
                     });
 
                     const refreshToken = await generateRefreshToken({
                         employeeID: employee.employeeID,
                         email: account.email,
                         roles,
-                        warehouseId,
+                        warehouseID,
                     });
                     resolve({
                         statusHttp: HTTP_OK,
@@ -195,14 +195,14 @@ class AccountService {
                             employeeID: accountFind[0].employeeID,
                             email: accountFind[0].email,
                             roles: roleNames,
-                            warehouseId: employee.warehouseId,
+                            warehouseID: employee.warehouseID,
                         });
 
                         const refreshToken = await generateRefreshToken({
                             employeeID: accountFind[0].employeeID,
                             email: accountFind[0].email,
                             roles: roleNames,
-                            warehouseId: employee.warehouseId,
+                            warehouseID: employee.warehouseID,
                         });
                         resolve({
                             status: 'OK',
