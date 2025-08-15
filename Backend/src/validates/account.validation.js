@@ -144,7 +144,7 @@ const checkSignUpValidate = [
             }
             return true;
         }),
-    body('warehouseId').notEmpty().withMessage('Warehouse ID là bắt buộc').bail(),
+    body('warehouseID').notEmpty().withMessage('Warehouse ID là bắt buộc').bail(),
     // .isMongoId()
     // .withMessage('Warehouse ID không hợp lệ'),
 ];

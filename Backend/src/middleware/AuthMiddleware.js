@@ -44,8 +44,8 @@ const authUser = async (req, res, next) => {
 
 const authUserIsManager = async (req, res, next) => {
     try {
-        const employeeID = req.headers['employeeid'];
-        const warehouseId = req.headers['warehouseid'];
+        const employeeID = req.headers['employeeID'];
+        const warehouseID = req.headers['warehouseID'];
 
         const token = req.headers.token;
         if (token) {
@@ -72,7 +72,7 @@ const authUserIsManager = async (req, res, next) => {
                             status: 'ERR',
                             message: 'Bạn không có quyền truy cập tài nguyên này',
                         });
-                    } else if (hasWareManagerRole && user.payload.warehouseId !== warehouseId) {
+                    } else if (hasWareManagerRole && user.payload.warehouseID !== warehouseID) {
                         return res.status(HTTP_FORBIDDEN).json({
                             status: 'ERR',
                             message: 'Bạn không có quyền truy cập kho này',
