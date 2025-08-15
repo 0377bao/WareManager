@@ -1,6 +1,7 @@
 const db = require('../../models');
 const dotenv = require('dotenv');
 const Employee = db.Employee;
+const Account = db.Account;
 
 dotenv.config();
 
@@ -12,13 +13,27 @@ class EmployeeService {
     findEmployee(employeeID) {
         return new Promise(async (resolve, reject) => {
             try {
-                const employee = await Employee.findOne({ employeeID });
+                const employee = await Employee.findOne({
+                    where: { employeeID },
+                    include: [
+                        {
+                            model: Account,
+                            as: 'account'
+                        }
+                    ]
+                });
+
+                const {account, ...response} = employee.toJSON()
+                
                 if (employee)
                     resolve({
                         status: 'OK',
                         statusHttp: HTTP_OK,
                         message: 'Lấy nhân viên thành công',
-                        employee,
+                        employee: {
+                            ...response,
+                            statusWork: account.statusWork
+                        },
                     });
                 else {
                     reject({

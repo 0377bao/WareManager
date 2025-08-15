@@ -102,7 +102,7 @@ class AccountService {
                     roles.forEach(async (role) => {
                         await AccountRoles.create({
                             accountID: account.accountID,
-                            roleID: role.roleID,
+                            roleId: role.roleID,
                         });
                     });
 
