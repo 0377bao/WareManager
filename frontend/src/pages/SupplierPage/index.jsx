@@ -25,7 +25,7 @@ const SupplierPage = () => {
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
-    const pageSize = 10;
+    const pageSize = 3;
     const [supplierId, setSupplierId] = useState(null);
     const [supplierName, setSupplierName] = useState('');
     const [supplierPhone, setSupplierPhone] = useState('');
@@ -586,8 +586,8 @@ const SupplierPage = () => {
                         className={cx('product-supplier-table')}
                         columns={columnsProduct}
                         data={productData}
-                        pageSize={productPage}
-                        onChange={onChangeProductTable}
+                        pageSize={productPageSize}
+                        onChangePage={onChangeProductTable}
                         pagination
                         currentPage={productPage}
                      />
