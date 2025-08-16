@@ -79,8 +79,8 @@ const SupplierPage = () => {
         setCreateError('');
         try {
             const tokenUser = JSON.parse(localStorage.getItem('tokenUser'));
-            const employeeId = JSON.parse(localStorage.getItem('employeeID'));
-            const res = await post('/api/supplier', newSupplier, tokenUser.accessToken, employeeId);
+            //const employeeId = JSON.parse(localStorage.getItem('employeeID'));
+            const res = await post('/api/supplier', newSupplier, tokenUser.accessToken, tokenUser.employeeID);
             console.log('123' + res);
             if (res.status === 'ERR') {
                 setCreateError(res.message);
@@ -163,7 +163,7 @@ const SupplierPage = () => {
                                 onClick={async () => {
                                     if (window.confirm('Bạn có chắc muốn xóa nhà cung cấp này?')) {
                                         const tokenUser = JSON.parse(localStorage.getItem('tokenUser'));
-                                        const employeeId = JSON.parse(localStorage.getItem('employeeID'));
+                                        const employeeId = tokenUser.employeeID
                                         await del(
                                             `/api/supplier/${record.supplierId}`,
                                             tokenUser.accessToken,
@@ -184,6 +184,7 @@ const SupplierPage = () => {
     const fetchSuppliers = async (pageReload = page) => {
         try {
             const res = await get('/api/supplier?page=' + pageReload + '&limit=' + pageSize);
+            console.log(res)
             setData(
                 res.suppliers.map((item, idx) => ({
                     supplierId: item.supplierId || '',
@@ -200,6 +201,7 @@ const SupplierPage = () => {
             setTotal(res.total || 0);
         } catch (err) {
             setData([]);
+            console.log(err)
             setTotal(0);
         }
     };
@@ -310,7 +312,7 @@ const SupplierPage = () => {
         setUpdateError('');
         console.log('supplierId', supplierId);
         const tokenUser = JSON.parse(localStorage.getItem('tokenUser'));
-        const employeeId = JSON.parse(localStorage.getItem('employeeID'));
+        const employeeId = tokenUser.employeeID;
         try {
             const res = await put(
                 '/api/supplier/' + supplierId,
