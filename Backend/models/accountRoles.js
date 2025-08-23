@@ -6,16 +6,21 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.INTEGER,
                 allowNull: false,
             },
-            roleId: {
+            roleID: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
         },
         {
             tableName: 'account_roles',
-            timestamps: false,
+            timestamps: true,
         },
     );
+
+    AccountRoles.associate = (models) => {
+        AccountRoles.belongsTo(models.Account, { foreignKey: 'accountID' });
+        AccountRoles.belongsTo(models.Role, { foreignKey: 'roleID' });
+    };
 
     return AccountRoles;
 };

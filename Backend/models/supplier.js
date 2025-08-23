@@ -5,7 +5,6 @@ module.exports = (sequelize, Sequelize) => {
             supplierID: {
                 type: Sequelize.STRING,
                 primaryKey: true,
-                allowNull: false,
             },
             supplierName: {
                 type: Sequelize.STRING,
@@ -19,16 +18,35 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            status: {
+                type: Sequelize.ENUM('ACTIVE', 'INACTIVE'),
+                allowNull: false,
+            },
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                validate: {
+                    isEmail: true,
+                },
                 unique: true,
             },
         },
-        { tableName: 'suppliers', timestamps: false },
+        {
+            tableName: 'suppliers',
+            timestamps: true,
+        },
     );
 
-    Supplier.associate = (models) => {};
+    Supplier.associate = (models) => {
+        Supplier.hasMany(models.Batch, { foreignKey: 'supplierID', as: 'batches' });
+
+        Supplier.belongsToMany(models.Product, {
+            through: models.Batch,
+            foreignKey: 'supplierID',
+            otherKey: 'productID',
+            as: 'products',
+        });
+    };
 
     return Supplier;
 };

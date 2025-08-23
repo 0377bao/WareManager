@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         {
             tableName: 'accounts',
-            timestamps: false,
+            timestamps: true,
         },
     );
 
@@ -41,7 +41,8 @@ module.exports = (sequelize, Sequelize) => {
         Account.belongsToMany(models.Role, {
             through: 'AccountRoles',
             foreignKey: 'accountID',
-            otherKey: 'roleId',
+            otherKey: 'roleID',
+            as: 'roles',
         });
     };
 
