@@ -46,12 +46,13 @@ class AccountService {
     }
     createAccount(newAccount) {
         return new Promise(async (resolve, reject) => {
+            const transaction = await db.sequelize.transaction();
             try {
                 const {
                     employeeID,
                     email,
                     password,
-                    statusWork,
+                    status,
                     employeeName,
                     cccd,
                     dob,
@@ -65,20 +66,32 @@ class AccountService {
                     warehouseID,
                 } = newAccount;
 
-                const accountFind = await Account.findAll({
-                    where: {
-                        email,
-                    },
-                });
-                if (accountFind.length !== 0) {
+                // Check email tồn tại
+                const accountFind = await Account.findOne({ where: { email } });
+                if (accountFind) {
                     resolve({
                         statusHttp: HTTP_BAD_REQUEST,
                         status: 'ERR',
                         message: 'Email đã tồn tại',
                     });
-                } else {
-                    const hash = bcrypt.hashSync(password, 10);
-                    const employee = await Employee.create({
+                }
+
+                // check employee tồn tại
+                const employeeFind = await Employee.findOne({ where: { employeeID } });
+                if (employeeFind) {
+                    resolve({
+                        statusHttp: HTTP_BAD_REQUEST,
+                        status: 'ERR',
+                        message: 'Nhân viên đã tồn tại',
+                    });
+                }
+
+                // Hash password
+                const hash = bcrypt.hashSync(password, 10);
+
+                // Tạo employee
+                const employee = await Employee.create(
+                    {
                         employeeID,
                         employeeName,
                         image,
@@ -90,44 +103,44 @@ class AccountService {
                         startDate,
                         endDate,
                         warehouseID,
-                    });
+                        status,
+                    },
+                    { transaction },
+                );
 
-                    const account = await Account.create({
+                // Tạo account + gán roles nhanh
+                const account = await Account.create(
+                    {
                         email,
                         password: hash,
-                        statusWork,
+                        statusWork: status,
                         employeeID: employee.employeeID,
-                    });
+                    },
+                    { transaction },
+                );
 
-                    roles.forEach(async (role) => {
-                        await AccountRoles.create({
-                            accountID: account.accountID,
-                            roleId: role.roleID,
-                        });
-                    });
-
-                    const accessToken = await generateAccessToken({
-                        employeeID: employee.employeeID,
-                        email: account.email,
-                        roles,
-                        warehouseID,
-                    });
-
-                    const refreshToken = await generateRefreshToken({
-                        employeeID: employee.employeeID,
-                        email: account.email,
-                        roles,
-                        warehouseID,
-                    });
-                    resolve({
-                        statusHttp: HTTP_OK,
-                        status: 'OK',
-                        message: 'Tạo tài khoản thành công',
-                        accessToken,
-                        refreshToken,
-                    });
+                if (roles?.length) {
+                    await account.setRoles(
+                        roles.map((r) => r.roleID),
+                        { transaction },
+                    );
                 }
+
+                // Generate token
+                const payload = { employeeID, email, roles, warehouseID };
+                const accessToken = await generateAccessToken(payload);
+                const refreshToken = await generateRefreshToken(payload);
+
+                await transaction.commit();
+                resolve({
+                    statusHttp: HTTP_OK,
+                    status: 'OK',
+                    message: 'Tạo tài khoản thành công',
+                    accessToken,
+                    refreshToken,
+                });
             } catch (e) {
+                await transaction.rollback();
                 console.log(e);
                 reject(e);
             }
@@ -163,10 +176,8 @@ class AccountService {
                                 accountID: accountFind[0].accountID,
                             },
                         });
-                        console.log(roles);
-
                         const roleNames = await Promise.all(
-                            roles.map((role) => Role.findOne({ where: { roleID: role.roleId } })),
+                            roles.map((role) => Role.findOne({ where: { roleID: role.roleID } })),
                         );
 
                         if (!roleNames) {
@@ -214,6 +225,49 @@ class AccountService {
                     }
                 }
             } catch (e) {
+                console.log(e);
+                reject(e);
+            }
+        });
+    }
+
+    changePassword(changePasswordData) {
+        return new Promise(async (resolve, reject) => {
+            const transaction = await db.sequelize.transaction();
+            try {
+                const { email, oldPassword, newPassword } = changePasswordData;
+
+                const accountFind = await Account.findOne({ where: { email } });
+                if (!accountFind) {
+                    resolve({
+                        status: 'ERR',
+                        message: 'Email không tồn tại',
+                        statusHttp: HTTP_NOT_FOUND,
+                    });
+                }
+
+                const comparePassword = await bcrypt.compare(oldPassword, accountFind.password);
+
+                if (!comparePassword) {
+                    resolve({
+                        status: 'ERR',
+                        message: 'Mật khẩu cũ không chính xác',
+                        statusHttp: HTTP_UNAUTHORIZED,
+                    });
+                }
+
+                const hashNewPassword = bcrypt.hashSync(newPassword, 10);
+                await Account.update({ password: hashNewPassword }, { where: { email } }, { transaction });
+
+                await transaction.commit();
+                resolve({
+                    status: 'OK',
+                    message: 'Đổi mật khẩu thành công',
+                    statusHttp: HTTP_OK,
+                });
+            } catch (e) {
+                await transaction.rollback();
+
                 console.log(e);
                 reject(e);
             }

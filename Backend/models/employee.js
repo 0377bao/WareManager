@@ -42,6 +42,10 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.DATE,
                 allowNull: true,
             },
+            status: {
+                type: Sequelize.ENUM('ACTIVE', 'INACTIVE'),
+                allowNull: false,
+            },
             warehouseID: {
                 type: Sequelize.STRING,
                 allowNull: false,
@@ -49,12 +53,15 @@ module.exports = (sequelize, Sequelize) => {
         },
         {
             tableName: 'employees',
-            timestamps: false,
+            timestamps: true,
         },
     );
 
     Employee.associate = (models) => {
         Employee.hasOne(models.Account, { foreignKey: 'employeeID', as: 'account' });
+        Employee.hasMany(models.Proposal, { foreignKey: "employeeIDCreate", as: "proposalsCreated" })
+        Employee.hasMany(models.Proposal, { foreignKey: "approverID", as: "proposalsApproved" })
+
     };
 
     return Employee;

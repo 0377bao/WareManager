@@ -2,25 +2,31 @@ module.exports = (sequelize, Sequelize) => {
     const Role = sequelize.define(
         'Role',
         {
-            roleId: {
+            roleID: {
                 type: Sequelize.STRING,
                 primaryKey: true,
             },
             roleName: {
-                type: Sequelize.STRING,
+                type: Sequelize.ENUM(
+                    'SYSTEM_ADMIN',
+                    'WARE_MANAGER',
+                    'STOCK_RECEIVER',
+                    'STOCK_DISPATCHER',
+                    'ACCOUNTANT',
+                ),
                 allowNull: false,
             },
         },
         {
             tableName: 'roles',
-            timestamps: false,
+            timestamps: true,
         },
     );
 
     Role.associate = (models) => {
         Role.belongsToMany(models.Account, {
             through: 'AccountRoles',
-            foreignKey: 'roleId',
+            foreignKey: 'roleID',
             otherKey: 'accountID',
         });
     };

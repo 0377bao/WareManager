@@ -20,17 +20,21 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
             },
             status: {
-                type: Sequelize.STRING,
+                type: Sequelize.ENUM('ACTIVE', 'INACTIVE'),
                 allowNull: false,
+                defaultValue: 'ACTIVE',
             },
         },
         {
             tableName: 'warehouses',
-            timestamps: false,
+            timestamps: true,
         },
     );
 
-    Warehouse.associate = (models) => {};
+    Warehouse.associate = (models) => {
+        Warehouse.hasMany(models.Zone, { foreignKey: 'warehouseID' });
+        Warehouse.hasMany(models.Batch, { foreignKey: 'warehouseID', as: 'batches' });
+    };
 
     return Warehouse;
 };
