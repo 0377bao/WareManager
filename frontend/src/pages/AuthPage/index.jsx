@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './AuthPage.module.scss';
 import { Image, Button, ModalCreateAccount, ModalEmployee, ModelFilter, Modal } from '@/components';
@@ -7,12 +7,14 @@ import globalStyle from '../../components/GlobalStyle/GlobalStyle.module.scss';
 import Tippy from '@tippyjs/react';
 import { Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { styleMessage } from '../../constants';
+import { formatRole, styleMessage } from '../../constants';
 import request, { post } from '../../utils/httpRequest';
 import { uploadImage } from '../../utils/uploadImage';
 import { useDispatch } from 'react-redux';
 import { startLoading, stopLoading } from '../../lib/redux/loading/slice';
-import { isOver18 } from '../../utils/validate';
+import { isOver18, validateEmployeeData } from '../../utils/validate';
+import EmployeeDTO from '../../dtos/EmployeeDTO';
+import { ModalReadEmployee } from '../../components';
 
 const cx = classNames.bind(styles);
 const cxGlobal = classNames.bind(globalStyle);
@@ -27,11 +29,11 @@ const tableColumns = [
         dataIndex: 'empName',
         key: 'empName',
     },
-    {
-        title: 'CCCD',
-        dataIndex: 'empCCCD',
-        key: 'empCCCD',
-    },
+    // {
+    //     title: 'CCCD',
+    //     dataIndex: 'empCCCD',
+    //     key: 'empCCCD',
+    // },
     {
         title: 'Ngày sinh',
         dataIndex: 'empDob',
@@ -47,11 +49,11 @@ const tableColumns = [
         dataIndex: 'empPhone',
         key: 'empPhone',
     },
-    {
-        title: 'Địa chỉ',
-        dataIndex: 'empAddress',
-        key: 'empAddress',
-    },
+    // {
+    //     title: 'Địa chỉ',
+    //     dataIndex: 'empAddress',
+    //     key: 'empAddress',
+    // },
     {
         title: 'Ngày vào làm',
         dataIndex: 'empStartDate',
@@ -66,7 +68,7 @@ const tableColumns = [
         title: 'Chức vụ',
         dataIndex: 'empRole',
         key: 'empRole',
-        render: (_, record) => <p>{record.empRole.map(item => item.roleName).join(',')}</p>
+        render: (_, record) => <p>{record.empRole.map((item) => formatRole[item.roleName]).join(',')}</p>,
     },
     {
         title: 'Trạng thái',
@@ -103,10 +105,12 @@ const dataSource = [
         empAddress: 'Hà Nội',
         empStartDate: '2020-05-01',
         warehouseId: 'K01',
-        empRole: [{
-            roleID: 1,
-            roleName: 'SYSTEM_ADMIN'
-        }],
+        empRole: [
+            {
+                roleID: 1,
+                roleName: 'SYSTEM_ADMIN',
+            },
+        ],
         empStatus: 'Đang làm',
         empImage:
             'https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482784zzu/anh-mo-ta.png',
@@ -177,20 +181,7 @@ const dataSource = [
     // },
 ];
 
-const columnsFilter = [
-    {
-        id: 1,
-        label: 'Mã nhân viên',
-    },
-    {
-        id: 2,
-        label: 'Số điện thoại',
-    },
-    {
-        id: 3,
-        label: 'Chức vụ',
-    },
-];
+
 
 const resetData = {
     empId: '',
@@ -201,6 +192,7 @@ const resetData = {
     empPhone: '',
     empAddress: '',
     empStartDate: '',
+    empEndDate: '',
     warehouseId: '',
     empRole: [],
     empStatus: '',
@@ -224,12 +216,63 @@ const AuthPage = () => {
     });
     const dispatch = useDispatch();
 
-    const [statusCreateAccount, setStatusCreateAccount] = useState(false);
-    const [currentPageEmployee, setCurrentPageEmployee] = useState(1)
+    const [filterSearchEmployee, setFilterSearchEmployee]= useState({
+        employeeID: "",
+        phoneNumber: "",
+        status: '',
+    })
 
-    const onChangeEmployeeTable = (newPage, pageSize) => [
-        setCurrentPageEmployee(newPage)
+    const columnsFilter = [
+    {
+        id: 1,
+        label: 'Mã nhân viên',
+        value: filterSearchEmployee.employeeID,
+        setValue: (value) => setFilterSearchEmployee(prev => ({...prev, employeeID: value}))
+    },
+    {
+        id: 2,
+        label: 'Số điện thoại',
+        value: filterSearchEmployee.phoneNumber,
+        setValue: (value) => setFilterSearchEmployee(prev => ({...prev, phoneNumber: value}))
+    },
+    // {
+    //     id: 3,
+    //     label: 'Chức vụ',
+    //     value: filterSearchEmployee.status,
+    //     setValue: (value) => setCurrentPageEmployee(prev => ({...prev, phoneNumber: value}))
+    // },
+    ];
+
+    // select box for model filter search
+    const selectBoxFilter = [
+        {
+            label: "Trạng thái làm việc",
+            value: filterSearchEmployee.status,
+            option: [
+                {
+                    name: "Đang làm"
+                },
+                {
+                    name: 'Nghỉ việc'
+                }
+            ],
+            setValue: (value) => setFilterSearchEmployee(prev => ({...prev, status: value}))
+        }
     ]
+
+    const [statusCreateAccount, setStatusCreateAccount] = useState(false);
+    const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
+
+    const onChangeEmployeeTable = (newPage, pageSize) => [setCurrentPageEmployee(newPage)];
+
+    const [employeeList, setEmployeeList] = useState([]);
+    const employeeSelected = useMemo(() => {
+        if(!selectedRowKeys) {
+            return null
+        }else {
+            return employeeList.find(item => item.empId == selectedRowKeys)
+        }
+    }, [selectedRowKeys])
 
     const rowSelection = {
         type: 'radio',
@@ -245,83 +288,7 @@ const AuthPage = () => {
         },
     };
 
-    const validateEmployeeData = (data) => {
-        const {
-            empId,
-            empName,
-            empCCCD,
-            empDob,
-            gender,
-            empPhone,
-            empAddress,
-            empStartDate,
-            warehouseId,
-            empRole,
-            empStatus,
-            empImage,
-        } = data;
-        if (
-            !empId ||
-            !empName ||
-            !empCCCD ||
-            !empDob ||
-            !gender ||
-            !empPhone ||
-            !empAddress ||
-            !empStartDate ||
-            !warehouseId ||
-            empRole.length < 0 ||
-            !empStatus ||
-            !empImage
-        ) {
-            toast.error('Vui lòng điền đầy đủ thông tin!', {
-                ...styleMessage
-            });
-            return false;
-        }
-        if (!/^[\p{L}\s]+$/u.test(empName)) {
-            toast.error('Tên chỉ chứa chữ và khoảng trắng', {
-                ...styleMessage
-            });
-            return false;
-        }
-        if (!/^\d{12}$/.test(empCCCD)) {
-            toast.error('Căn cước công dân bắt buộc có độ dài 12 chữ số', {
-                ...styleMessage
-            });
-            return false;
-        }
-        if (!/^(03|05|07|08|09)\d{8}$/.test(empPhone)) {
-            toast.error('Số điện thoại có độ dài 10 chữ số và bắt đầu bằng 03 hoặc 05 hoặc 07 hoặc 08 hoặc 09', {
-                ...styleMessage
-            });
-            return false;
-        }
-        if(new Date(empDob) > Date.now()) { 
-            toast.error('Ngày sinh phải trước ngày hôm nay', {
-                ...styleMessage
-            });
-            return false;
-        }
-        if(new Date(empDob) < Date.now()) {
-            if(!isOver18(empDob)) {
-                toast.error('Nhân viên phải bằng hoặc trên 18 tuổi', {
-                    ...styleMessage
-                })
-                return false;
-            }
-        }
-        if(new Date(empStartDate) < Date.now()) {
-            toast.error('Ngày vào làm phải sau ngày hôm nay', {
-                ...styleMessage
-            })
-            return false;
-        }
-        return true;
-    };
-
     const handleAddEmployee = async () => {
-        console.log(empData);
         if (!statusCreateAccount) {
             toast.error('Vui lòng tạo tài khoản cho nhân viên trước khi thêm nhân viên', {
                 ...styleMessage,
@@ -339,7 +306,7 @@ const AuthPage = () => {
                 email: account.email,
                 password: account.password,
                 confirmPassword: account.password,
-                statusWork: account.statusWork == 'Đang làm' ? 'active' : 'inactive',
+                status: account.statusWork == 'Đang làm' ? 'ACTIVE' : 'INACTIVE',
                 employeeName: empData.empName,
                 cccd: empData.empCCCD,
                 dob: empData.empDob,
@@ -369,13 +336,16 @@ const AuthPage = () => {
                 statusWork: 'Đang làm',
             });
             setStatusCreateAccount(false);
+            fetchEmployeeList();
         } catch (err) {
-            dispatch(stopLoading())
+            dispatch(stopLoading());
             console.log(err);
-            const message = typeof err.response.data.message == Object ? err.response.data.message.map((item) => item).join(',') : err.response.data.message
+            const message =
+                typeof err.response.data.message == Object
+                    ? err.response.data.message.map((item) => item).join(',')
+                    : err.response.data.message;
 
             toast.error(message, styleMessage);
-
         }
     };
 
@@ -384,23 +354,75 @@ const AuthPage = () => {
             setSelectedRowKeys((prev) => []);
         }
         setAction((prev) => ({ ...prev, [key]: value }));
-        setEmpData(resetData);
+        setTimeout(() => {
+            setEmpData(resetData);
+        }, 1000)
     };
 
     useEffect(() => {
         if (selectedRowKeys.length > 0) {
             console.log(selectedRowKeys);
-            setEmpData(dataSource[Number.parseInt(selectedRowKeys[0]) - 1]);
+            setEmpData(employeeList.find((item) => item.empId == selectedRowKeys));
         }
     }, [selectedRowKeys]);
 
-    const handleUpdateEmployee = useCallback(async () => {
+    const handleUpdateEmployee = async () => {
+        const validValue = validateEmployeeData(empData, 'update');
+        if (!validValue) return;
         try {
             // call api update employee
+            dispatch(startLoading());
+            const token = JSON.parse(localStorage.getItem('tokenUser'));
+            const infoEmployeeBefore = employeeList.find((item) => item.empId == selectedRowKeys);
+            let imageUrl = '';
+            if (infoEmployeeBefore.empImage == empData.empImage) {
+                imageUrl = infoEmployeeBefore.empImage;
+            } else {
+                imageUrl = await uploadImage(empData.empImage);
+            }
+
+            const requestData = {
+                employeeID: empData.empId,
+                email: account.email,
+                password: account.password,
+                status: empData.empStatus == 'Đang làm' ? 'ACTIVE' : 'INACTIVE',
+                employeeName: empData.empName,
+                cccd: empData.empCCCD,
+                dob: empData.empDob,
+                phoneNumber: empData.empPhone,
+                gender: empData.gender == 'Nam' ? 'male' : 'female',
+                image: imageUrl,
+                address: empData.empAddress,
+                startDate: empData.empStartDate,
+                endDate: empData.empStatus == 'Nghỉ việc' ? empData.empEndDate : null,
+                roles: empData.empRole,
+                warehouseID: empData.warehouseId,
+            };
+            //call api thêm nhân viên
+            const response = await request.put('/api/employee/update', requestData, {
+                headers: {
+                    token: `Beare ${token.accessToken}`,
+                    employeeid: token.employeeID,
+                    warehouseid: requestData.warehouseID,
+                },
+            });
+            dispatch(stopLoading());
+            toast.success('Cập nhật nhân viên thành công', styleMessage);
+            setEmpData(resetData);
+            setAccount({
+                email: '',
+                password: '',
+                statusWork: 'Đang làm',
+            });
+            fetchEmployeeList();
+            handleCloseModal('update', false);
         } catch (err) {
+            console.log(err)
             // throw err
+            toast.error(err.response.data.messages[0], styleMessage);
+            return;
         }
-    }, []);
+    };
 
     const showModalCreateAccount = async () => {
         try {
@@ -411,41 +433,112 @@ const AuthPage = () => {
         }
     };
 
+    const fetchEmployeeList = async () => {
+        try {
+            const { employeeID, accessToken } = JSON.parse(localStorage.getItem('tokenUser'));
+            const response = await post(
+                '/api/employee/list',
+                {
+                    employeeID: employeeID,
+                },
+                accessToken,
+                employeeID,
+            );
+
+            const formatEmployee = response.employees.map((item) => {
+                const emp = new EmployeeDTO(item);
+                return { ...emp };
+            });
+
+            setEmployeeList(formatEmployee);
+        } catch (err) {
+            console.log('fetch employee list err', err.response.data.message);
+            setEmployeeList([]);
+        }
+    };
+
+    const handleResetFilter = () => {
+        setFilterSearchEmployee({
+            employeeID: '',
+            phoneNumber: '',
+            status: ''
+        })
+        fetchEmployeeList()
+    }
+
+    const handleSearch = async () => {
+        if(!Object.keys(filterSearchEmployee).some(key => filterSearchEmployee[key])) return;
+        try{
+            const tokenUser = JSON.parse(localStorage.getItem('tokenUser'))
+            const params = {...filterSearchEmployee, status: filterSearchEmployee.status == "Đang làm" ? 'ACTIVE' : 'INACTIVE'}
+            const resultSearch = await request.get('/api/employee/filter', {
+                params,
+                headers: {
+                    token: `Beare ${tokenUser.accessToken}`,
+                    employeeid: tokenUser.employeeID
+                }
+            })
+            const formatEmployee = resultSearch.data.employeeFilter.map((item) => {
+                const emp = new EmployeeDTO(item);
+                return { ...emp };
+            });
+            setEmployeeList(formatEmployee)
+        }catch(err) {
+            fetchEmployeeList()
+        }
+    }
+
+    useEffect(() => {
+        fetchEmployeeList();
+    }, []);
+
     return (
         <div className={cx('wrapper-auth')}>
             {action.add && (
-                <Modal isOpenInfo={true} showButtonClose={false} onClose={() =>{}} arrButton={[
-                    (index) => (
-                        <Button key={index} primary onClick={handleAddEmployee}>
-                            <span>Thêm nhân viên</span>
-                        </Button>
-                    ),
-                    (index) => (
-                        <Button key={index} primary onClick={showModalCreateAccount}>
-                            <span>Tạo tài khoản</span>
-                        </Button>
-                    )
-                ]}>
+                <Modal
+                    isOpenInfo={true}
+                    showButtonClose={false}
+                    onClose={() => {}}
+                    arrButton={[
+                        (index) => (
+                            <Button key={index} primary onClick={handleAddEmployee}>
+                                <span>Thêm nhân viên</span>
+                            </Button>
+                        ),
+                        (index) => (
+                            <Button key={index} primary onClick={showModalCreateAccount}>
+                                <span>Tạo tài khoản</span>
+                            </Button>
+                        ),
+                    ]}
+                >
                     <ModalEmployee
-                    className={cx('wrapper-model-employee')}
-                    data={empData}
-                    isAdmin={true}
-                    onClose={() => handleCloseModal('add', false)}
-                    setData={setEmpData}
-                    action={'add'}
-                />
-                
+                        className={cx('wrapper-model-employee')}
+                        data={empData}
+                        isAdmin={true}
+                        onClose={() => handleCloseModal('add', false)}
+                        setData={setEmpData}
+                        action={'add'}
+                    />
                 </Modal>
-                
             )}
-            {action.update && (
-                <Modal isOpenInfo={true} showButtonClose={false} onClose={() =>{}} arrButton={[
-                    (index) => (
-                        <Button key={index} primary onClick={handleUpdateEmployee}>
-                        <span>Cập nhật</span>
-                    </Button>
-                    )
-                ]}>
+            {action.update && employeeSelected.empStatus != 'Nghỉ việc' ? (
+                <Modal
+                    isOpenInfo={true}
+                    showButtonClose={false}
+                    onClose={() => {}}
+                    arrButton={[
+                        (index) => (
+                            <Button
+                                key={index}
+                                primary
+                                onClick={handleUpdateEmployee}
+                            >
+                                <span>Cập nhật</span>
+                            </Button>
+                        ),
+                    ]}
+                >
                     <ModalEmployee
                         className={cx('wrapper-model-employee')}
                         isAdmin={true}
@@ -453,14 +546,16 @@ const AuthPage = () => {
                         onClose={() => handleCloseModal('update', false)}
                         setData={setEmpData}
                         action={'update'}
-                />
-                
+                    />
                 </Modal>
-                
+            ) : (
+                <Modal showButtonClose={false} isOpenInfo={action.update} onClose={() => {}}>
+                    <ModalReadEmployee className={cx('wrapper-model-employee')} data={empData} onClose={() => handleCloseModal('update', false)} />
+                </Modal>
             )}
 
             {/** Lọc theo điều kiện */}
-            <ModelFilter columns={columnsFilter}>
+            <ModelFilter columns={columnsFilter} handleResetFilters={handleResetFilter} handleSubmitFilter={handleSearch} selectInput={selectBoxFilter}>
                 <Button primary onClick={() => handleCloseModal('add', true)} disabled={action.add}>
                     <span>Thêm nhân viên</span>
                 </Button>
@@ -469,7 +564,7 @@ const AuthPage = () => {
             <h1>Danh sách nhân viên</h1>
             <MyTable
                 rowSelection={rowSelection}
-                data={dataSource}
+                data={employeeList}
                 columns={tableColumns}
                 pageSize={4}
                 pagination
