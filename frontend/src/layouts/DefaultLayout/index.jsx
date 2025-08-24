@@ -12,38 +12,14 @@ import { post } from '../../utils/httpRequest';
 import { login } from '../../lib/redux/auth/authSlice';
 import { jwtDecode } from 'jwt-decode';
 import EmployeeDTO from '../../dtos/EmployeeDTO';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const DefaultLayout = ({ children }) => {
     const [showChatBox, setShowChatBox] = useState(false);
     const { statusLoading } = useSelector((state) => state.LoadingSlice);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        const fetchUser = async (accessToken, email, employeeID) => {
-            try {
-                const { roles } = jwtDecode(accessToken).payload;
-                const responseUser = await post(
-                    '/api/employee/employee-detail',
-                    {
-                        email: email,
-                        employeeID,
-                    },
-                    accessToken,
-                );
-                const {employee} = responseUser
-                dispatch(login({ ...new EmployeeDTO({ ...employee, roles }) }));
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        const tokenUser = localStorage.getItem('tokenUser');
-        if (tokenUser != null) {
-            const { employeeID, email, accessToken, refreshToken } = JSON.parse(localStorage.getItem('tokenUser'));
-            fetchUser(accessToken, email, employeeID);
-        }
-    }, []);
+        
     return (
         <div className={cx('wrapper-layout')}>
             <Header />
