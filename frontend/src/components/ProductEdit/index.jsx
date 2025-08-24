@@ -9,10 +9,10 @@ import {ModalUpdate} from "@/components"
 const cx = classNames.bind(styles);
 
 
-const ProductEdit = ({ data, onClose }) => {
+const ProductEdit = ({ data, onClose, handleUpdateProduct }) => {
     const [productData, setProductData] = useState({
         productName: data.productName,
-        productUnit: data.unit,
+        productStatus: data.status,
         productMinStock: data.minStock
     })
 
@@ -20,35 +20,45 @@ const ProductEdit = ({ data, onClose }) => {
     {
         id:1,
         label: 'Tên sản phẩm',
+        name: 'productName',
         value: productData.productName,
         setValue: (value) => setProductData(prev => ({...prev, productName: value}))
     },
     {
-        id: 2,
-        label: 'Đơn vị tính',
-        value: productData.productUnit,
-        setValue: (value) => setProductData(prev => ({...prev, productUnit: value}))
-    },
-    {
-        id: 3, 
+        id: 2, 
         label: 'Tồn kho tối thiểu',
+        name: 'productMinStock',
         value: productData.productMinStock,
+        pattern: /^\d{1,}/,
+        message: 'Tồn kho tối thiểu phải là số nguyên',
         setValue: (value) => setProductData(prev => ({...prev, productMinStock: value}))
-    }
+    },
+     {
+        id: 3,
+        label: 'Trạng thái',
+        name: 'productStatus',
+        value: productData.productStatus,
+        option: [
+            {
+                name: "Đang kinh doanh",
+                value: 'AVAILABLE'
+            },
+            {
+                name: 'Hàng trong kho đã hết',
+                value: 'OUT_OF_STOCK'
+            },
+            {
+                name: 'Ngừng kinh doanh',
+                value: 'DISCONTINUED'
+            }
+        ],
+        setValue: (value) => setProductData(prev => ({...prev, productStatus: value}))
+    },
     ]
-
-    const handleUpdateProduct = async () => {
-        try{
-            // call api
-            console.log(productData)
-        }catch(err) {
-            toast.error(err)
-        }
-    }
 
     return (
         <Modal showButtonClose={false} isOpenInfo={true} onClose={onClose}>
-            <ModalUpdate label={"Cập nhật sản phẩm"} columns={columns} onSubmit={handleUpdateProduct} onClose={onClose}/>
+            <ModalUpdate label={"Cập nhật sản phẩm"} columns={columns} onSubmit={handleUpdateProduct} onClose={onClose} defaultValue={productData} type={"update"}/>
         </Modal>
         
     );
