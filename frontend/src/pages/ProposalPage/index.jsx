@@ -144,13 +144,12 @@ export default function ProposalCreatePage() {
                 newProduct.sku = product.productID;
                 newProduct.name = product.productName;
                 newProduct.listUom = resBatchUnit.data.units;
-                if (items.length == 1 && !items[0].sku) {
-                    setItems((prev) => [newProduct]);
-                } else {
-                    setItems((prev) => [...prev, newProduct]);
-                }
+                
+                setItems((prev) => [...prev, newProduct]);
             } catch (err) {
                 console.log(err);
+                toast.error(err.response.data?.message || err.response.data?.messages[0], styleMessage)
+                return;
             }
         };
 
@@ -172,9 +171,7 @@ export default function ProposalCreatePage() {
 
     useEffect(() => {
         if (qrCode != null) {
-            console.log('Vào');
-            // call api get product
-            fetchProduct('SP2');
+            fetchProduct(qrCode);
         }
     }, [qrCode]);
 
