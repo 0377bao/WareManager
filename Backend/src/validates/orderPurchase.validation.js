@@ -22,6 +22,13 @@ const checkCreateOrderPurchase = [
         .withMessage('Trạng thái phải là chuỗi')
         .isIn(['COMPLETED', 'INCOMPLETE', 'CANCELED'])
         .withMessage('Trạng thái không phải là PENDING, COMPLETED hoặc CANCELLED'),
+    body('type')
+        .optional()
+        .isString()
+        .withMessage('Loại phải là chuỗi')
+        .isIn(['NORMAL', 'SUPPLEMENT'])
+        .withMessage('Loại không phải là NORMAL hoặc SUPPLEMENT'),
+    body('originalOrderPurchaseID').optional().isString().withMessage('Mã đơn nhập gốc phải là chuỗi'),
     body('orderPurchaseDetails')
         .isArray()
         .withMessage('Chi tiết đơn nhập hàng phải là một mảng')
@@ -116,13 +123,21 @@ const checkCreateOrderPurchase = [
         .withMessage('Ô phải là chuỗi'),
 ];
 
-const checkCompleteOrderPurchase = [
+const checkUpdateStatusOrderPurchase = [
     body('orderPurchaseID')
         .notEmpty()
         .withMessage('Mã đơn nhập hàng là bắt buộc')
         .bail()
         .isString()
         .withMessage('Mã đơn nhập hàng không hợp lệ'),
+    body('status')
+        .notEmpty()
+        .withMessage('Trạng thái là bắt buộc')
+        .bail()
+        .isString()
+        .withMessage('Trạng thái không hợp lệ')
+        .isIn(['COMPLETED', 'CANCELED'])
+        .withMessage('Trạng thái không phải là COMPLETED hoặc CANCELED'),
 ];
 
-module.exports = { checkCreateOrderPurchase, checkCompleteOrderPurchase };
+module.exports = { checkCreateOrderPurchase, checkUpdateStatusOrderPurchase };
