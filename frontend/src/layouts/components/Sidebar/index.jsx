@@ -25,6 +25,12 @@ import {
     FileClock,
     UserCog,
     Columns3,
+    File,
+    Target,
+    List,
+    PenLine,
+    TruckElectric,
+    CheckLine,
 } from 'lucide-react';
 import logo from '../../../assets/logo_v2.jpg';
 import { useLocation } from 'react-router-dom';
@@ -37,6 +43,110 @@ const shopName = import.meta.env.VITE_SOFTWARE_NAME;
 const cx = classNames.bind(styles);
 
 const Sidebar = () => {
+    // const sidebarMenu = [
+    //     {
+    //         id: 1,
+    //         title: 'Dashboard',
+    //         iconName: LayoutDashboard,
+    //         path: '/',
+    //     },
+    //     {
+    //         id: 2,
+    //         title: 'Quản lý sản phẩm',
+    //         iconName: ShoppingCart,
+    //         subMenu: [
+    //             {
+    //                 title: 'Nhóm sản phẩm',
+    //                 iconName: ShoppingBasket,
+    //                 path: '/categories',
+    //             },
+    //             {
+    //                 title: 'Sản phẩm',
+    //                 iconName: Milk,
+    //                 path: '/products',
+    //             },
+    //             {
+    //                 title: 'Quản lý lô hàng',
+    //                 iconName: Package,
+    //                 path: '/batch',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: 3,
+    //         title: 'Quản lý nhập xuất',
+    //         iconName: BookMinus,
+    //         // path: '/ware-receive',
+    //         subMenu: [
+    //             {
+    //                 title: 'Tạo phiếu đề xuất',
+    //                 iconName: FileClock,
+    //                 path: '/proposal',
+    //             },
+    //             {
+    //                 title: 'Nhập kho',
+    //                 iconName: CircleArrowRight,
+    //                 path: '/ware-receive',
+    //             },
+    //             {
+    //                 title: 'Xuất kho',
+    //                 iconName: CircleArrowLeft,
+    //                 path: '/ware-release',
+    //             },
+    //             {
+    //                 title: 'Chuyển kho',
+    //                 iconName: Truck,
+    //                 path: '/ware-transfer',
+    //             },
+    //             {
+    //                 title: 'Phê duyệt',
+    //                 iconName: Truck,
+    //                 path: '/approve',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: 4,
+    //         title: 'Quản lý đối tác',
+    //         iconName: UserCog,
+    //         subMenu: [
+    //             {
+    //                 title: 'Khách hàng',
+    //                 iconName: Users,
+    //                 path: '/customer',
+    //             },
+    //             {
+    //                 title: 'Nhà cung cấp',
+    //                 iconName: Factory,
+    //                 path: '/supplier',
+    //             },
+    //             {
+    //                 title: 'Đổi trả',
+    //                 iconName: Undo2,
+    //                 path: '/return-order',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: 5,
+    //         title: 'Quản lý kho',
+    //         iconName: Warehouse,
+    //         subMenu: [
+    //             {
+    //                 title: 'Kiểm kê kho',
+    //                 iconName: CalendarCheck,
+    //                 path: '/check-inventory',
+    //             },
+
+    //             {
+    //                 title: 'Quản lý khu vực',
+    //                 iconName: Columns3,
+    //                 path: '/zone',
+    //             },
+    //         ],
+    //     },
+    // ];
+
     const sidebarMenu = [
         {
             id: 1,
@@ -46,8 +156,8 @@ const Sidebar = () => {
         },
         {
             id: 2,
-            title: 'Quản lý sản phẩm',
-            iconName: ShoppingCart,
+            title: 'Master Data',
+            iconName: Target,
             subMenu: [
                 {
                     title: 'Nhóm sản phẩm',
@@ -60,51 +170,6 @@ const Sidebar = () => {
                     path: '/products',
                 },
                 {
-                    title: 'Quản lý lô hàng',
-                    iconName: Package,
-                    path: '/batch',
-                },
-            ],
-        },
-        {
-            id: 3,
-            title: 'Quản lý nhập xuất',
-            iconName: BookMinus,
-            // path: '/ware-receive',
-            subMenu: [
-                {
-                    title: 'Tạo phiếu đề xuất',
-                    iconName: FileClock,
-                    path: '/proposal',
-                },
-                {
-                    title: 'Nhập kho',
-                    iconName: CircleArrowRight,
-                    path: '/ware-receive',
-                },
-                {
-                    title: 'Xuất kho',
-                    iconName: CircleArrowLeft,
-                    path: '/ware-release',
-                },
-                {
-                    title: 'Chuyển kho',
-                    iconName: Truck,
-                    path: '/ware-transfer',
-                },
-                {
-                    title: 'Phê duyệt',
-                    iconName: Truck,
-                    path: '/approve',
-                },
-            ],
-        },
-        {
-            id: 4,
-            title: 'Quản lý đối tác',
-            iconName: UserCog,
-            subMenu: [
-                {
                     title: 'Khách hàng',
                     iconName: Users,
                     path: '/customer',
@@ -115,9 +180,48 @@ const Sidebar = () => {
                     path: '/supplier',
                 },
                 {
-                    title: 'Đổi trả',
-                    iconName: Undo2,
-                    path: '/return-order',
+                    title: 'Nhân sự',
+                    iconName: User,
+                    path: '/auth',
+                },
+            ],
+        },
+        {
+            id: 3,
+            title: 'Phiếu đề xuất',
+            iconName: ClipboardMinus,
+            subMenu: [
+                {
+                    title: 'DS phiếu đề xuất',
+                    iconName: List,
+                    path: '/proposal-list',
+                },
+                // {
+                //     title: 'Tạo phiếu đề xuất',
+                //     iconName: PenLine,
+                //     path: '/proposal',
+                // },
+                {
+                    title: 'Phê duyệt',
+                    iconName: CheckLine,
+                    path: '/approve',
+                },
+            ],
+        },
+        {
+            id: 4,
+            title: 'Quản lý nhập xuất',
+            iconName: TruckElectric,
+            subMenu: [
+                {
+                    title: 'Tạo phiếu nhập kho',
+                    iconName: CircleArrowRight,
+                    path: '/ware-receive',
+                },
+                {
+                    title: 'Tạo phiếu xuất kho',
+                    iconName: CircleArrowLeft,
+                    path: '/ware-release',
                 },
             ],
         },
@@ -133,14 +237,14 @@ const Sidebar = () => {
                 },
 
                 {
-                    title: 'Nhân sự',
-                    iconName: User,
-                    path: '/auth',
-                },
-                {
                     title: 'Quản lý khu vực',
                     iconName: Columns3,
                     path: '/zone',
+                },
+                {
+                    title: 'Quản lý lô hàng',
+                    iconName: Package,
+                    path: '/batch',
                 },
             ],
         },
@@ -148,28 +252,28 @@ const Sidebar = () => {
 
     let location = useLocation();
     const [isOpenInfo, setIsOpenInfo] = useState(false);
-    const itemDrop = useSelector(state => state.DropSideBarSlice.itemDrop)
+    const itemDrop = useSelector((state) => state.DropSideBarSlice.itemDrop);
     const dispatch = useDispatch();
-    const warehouseRedux = useSelector(state => state.WareHouseSlice.warehouse)
+    const warehouseRedux = useSelector((state) => state.WareHouseSlice.warehouse);
     const [warehouse, setWarehouse] = useState({
-        warehouseID: "",
+        warehouseID: '',
         warehouseName: '',
         faxNumber: '',
         address: '',
-        status: ''
-    })
+        status: '',
+    });
 
     const closeInfoWarehouse = () => {
         setIsOpenInfo(false);
     };
 
     const changeDropItem = (ids) => {
-        dispatch(changDropItem([...ids]))
+        dispatch(changDropItem([...ids]));
     };
 
-    useEffect(()=> {
-        if(warehouseRedux) setWarehouse(warehouseRedux)
-    }, [])
+    useEffect(() => {
+        if (warehouseRedux) setWarehouse(warehouseRedux);
+    }, []);
 
     return (
         <>

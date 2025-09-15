@@ -29,6 +29,9 @@
     // header
     --z-index-header: 1000;
 
+    // header import product
+    --z-index-header-import: 999;
+
     // modal filter
     --filter-height-customer: 160px; 
 
@@ -36,9 +39,14 @@
     --success: #3b82f6;
     --success-hover: #2563eb;
     --error: red;
+    --active-tab: #6b90cc;
 
     // table
     --color-header-table: #333;
+
+    // border-input
+    --border-color: #3b82f6;
+    --show-input: rgba(59, 130, 246, 0.2);
 }
 
 * {
