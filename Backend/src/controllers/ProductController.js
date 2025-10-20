@@ -12,8 +12,9 @@ class ProductController {
         }
     }
     async getAllProduct(req, res) {
+        const { page } = req.query;
         try {
-            const { statusHttp, ...response } = await ProductService.findAllProduct();
+            const { statusHttp, ...response } = await ProductService.findAllProduct(page);
             return res.status(statusHttp).json(response);
         } catch (err) {
             return res.status(err.statusHttp).json(err);
@@ -41,6 +42,22 @@ class ProductController {
                 productID,
                 ...req.body,
             });
+            return res.status(statusHttp).json(response);
+        } catch (err) {
+            return res.status(err.statusHttp).json(err);
+        }
+    }
+    async filterProduct(req, res) {
+        try {
+            const { statusHttp, ...response } = await ProductService.filterProduct(req.body);
+            return res.status(statusHttp).json(response);
+        } catch (err) {
+            return res.status(err.statusHttp).json(err);
+        }
+    }
+    async createProduct(req, res) {
+        try {
+            const { statusHttp, ...response } = await ProductService.createProduct(req.body);
             return res.status(statusHttp).json(response);
         } catch (err) {
             return res.status(err.statusHttp).json(err);
