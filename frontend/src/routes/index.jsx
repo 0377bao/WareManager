@@ -22,6 +22,7 @@ import {
     ApprovePage,
 } from '../pages';
 import DefaultLayout from '../layouts/DefaultLayout';
+import HistoryPage from '../pages/HistoryPage';
 
 const publicRoute = [
     {
@@ -126,9 +127,17 @@ const publicRoute = [
     },
     {
         page: ApprovePage,
-        path: '/approve',
+        path: '/proposal-list',
         layout: DefaultLayout,
     },
+    {
+        page: HistoryPage,
+        path: '/history',
+        layout: DefaultLayout,
+    },
+];
+const publicRouteWithAdmin = [
+    ...publicRoute,
     {
         page: ApprovePage,
         path: '/proposal-list',
@@ -136,4 +145,4 @@ const publicRoute = [
     },
 ];
 
-export { publicRoute };
+export { publicRoute, publicRouteWithAdmin };

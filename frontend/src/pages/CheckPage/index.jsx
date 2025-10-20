@@ -1,152 +1,310 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { use, useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './CheckPage.module.scss';
-import { Button, MyTable } from '../../components';
+import { Button, ModelFilter, MyTable, PaginationUI } from '@/components';
+import CreateCheckDetail from './CreateCheckDetail';
+import globalStyle from '@/components/GlobalStyle/GlobalStyle.module.scss';
+import ModelProposalDetail from '@/pages/ApprovePage/ModelProposalDetail';
+import { getAllInventoryCheck, getFilterInventoryCheck } from '../../services/inventoryCheck.service';
+import parseToken from '../../utils/parseToken';
+import { formatStatusInventoryCheck, formatStatusOrderPurchaseMissingInventoryCheck } from '../../constants';
+import ShowLocationDetail from './ShowLocationDetail';
+import { Plus } from 'lucide-react';
 
+const cxGlobal = classNames.bind(globalStyle);
 const cx = classNames.bind(styles);
-const tableColumns = [
-    {
-        title: 'Mã hàng',
-        dataIndex: 'itemCode',
-        key: 'itemCode',
-        width: '10%',
-    },
-    {
-        title: 'Tên hàng',
-        dataIndex: 'itemName',
-        key: 'itemName',
-        width: '20%',
-    },
-    {
-        title: 'Vị trí lưu trữ',
-        dataIndex: 'storageLocation',
-        key: 'storageLocation',
-        width: '10%',
-    },
-    {
-        title: 'Đơn vị tính',
-        dataIndex: 'unit',
-        key: 'unit',
-        width: '10%',
-    },
-    {
-        title: 'Tồn hệ thống',
-        dataIndex: 'systemStock',
-        key: 'systemStock',
-        width: '10%',
-    },
-    {
-        title: 'Tồn thực tế',
-        dataIndex: 'actualStock',
-        key: 'actualStock',
-        width: '10%',
-    },
-    {
-        title: 'Chênh lệch',
-        dataIndex: 'difference',
-        key: 'difference',
-        width: '10%',
-    },
-    {
-        title: 'Trạng thái',
-        dataIndex: 'status',
-        key: 'status',
-        width: '10%',
-    },
-    {
-        title: 'Xóa',
-        dataIndex: 'actions',
-        key: 'actions',
-        width: '10%',
-    },
-];
 
-const CheckPage = () => {
-    const [page, setPage] = useState(1);
-    const [inventoryCheckId, setInventoryCheckId] = useState('');
-    const [inventoryCheckDate, setInventoryCheckDate] = useState('');
-    const [staffName, setStaffName] = useState('');
-    const [note, setNote] = useState('');
+const ImportProduct = () => {
+    const [showDetailInventoryCheck, setShowDetailInventoryCheck] = useState(false);
+    const [showCreateInventoryCheck, setShowCreateInventoryCheck] = useState(false);
+    const [listInventoryCheck, setListInventoryCheck] = useState([]);
+    const [inventoryCheckDetail, setInventoryCheckDetail] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage - 1 == 0) return;
+        setCurrentPage(currentPage - 1);
+    };
+
+    useEffect(() => {
+        fetchData(currentPage);
+    }, [currentPage]);
+
+    const fetchData = async (currentPage) => {
+        console.log('fetch data');
+
+        const warehouseID = parseToken('warehouse').warehouseID;
+        const res = await getAllInventoryCheck(warehouseID, currentPage);
+        if (res.status == 200) {
+            setListInventoryCheck(res.data.data);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        console.log(listInventoryCheck);
+    }, [listInventoryCheck]);
+
+    const [filterInventoryCheck, setFilterInventoryCheck] = useState({
+        inventoryCheckID: '',
+        status: 'ALL',
+        checkStatus: 'ALL',
+        createdAt: '',
+        employeeName: '',
+    });
+
+    const columnsDefineSuggestProposal = [
+        {
+            title: 'Mã phiếu kiểm kê',
+            dataIndex: 'inventoryCheckID',
+            key: 'inventoryCheckID',
+            className: cx('col-inventory-check-id'),
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (_, record) => <p>{record?.createdAt?.slice(0, 10)}</p>,
+        },
+        {
+            title: 'Nhân viên lập phiếu',
+            dataIndex: 'employeeIDCreate',
+            key: 'employeeIDCreate',
+            render: (_, record) => {
+                return <p>{record?.employee?.employeeName}</p>;
+            },
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            render: (index, record) => {
+                return (
+                    <div className={cx('status-proposal')}>
+                        <div className={cx('status-indicator', record.status)}></div>
+                        <p>{formatStatusInventoryCheck[record.status]}</p>
+                    </div>
+                );
+            },
+        },
+        {
+            title: 'Kiểm kê thực tế',
+            dataIndex: 'checkStatus',
+            key: 'checkStatus',
+            render: (index, record) => {
+                return (
+                    <div className={cx('status-proposal')}>
+                        <div className={cx('status-indicator', record.checkStatus)}></div>
+                        <p>{formatStatusOrderPurchaseMissingInventoryCheck[record.checkStatus]}</p>
+                    </div>
+                );
+            },
+        },
+        {
+            title: 'Hành động',
+            dataIndex: 'action',
+            key: 'action',
+            render: (text, record) => {
+                return (
+                    <div className={cxGlobal('action-table')}>
+                        <Button
+                            primary
+                            medium
+                            onClick={() => {
+                                setInventoryCheckDetail(record);
+                                setShowDetailInventoryCheck(true);
+                            }}
+                        >
+                            <span>Xem chi tiết</span>
+                        </Button>
+                    </div>
+                );
+            },
+        },
+    ];
+
+    const columnsFilter = [
+        {
+            id: 1,
+            label: 'Mã phiếu kiểm kê',
+            dataIndex: 'inventoryCheckID',
+            key: 'inventoryCheckID',
+            setValue: (value) => setFilterInventoryCheck({ ...filterInventoryCheck, inventoryCheckID: value }),
+            value: filterInventoryCheck.inventoryCheckID,
+        },
+        {
+            id: 2,
+            label: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            type: 'date',
+            setValue: (value) => setFilterInventoryCheck({ ...filterInventoryCheck, createdAt: value }),
+            value: filterInventoryCheck.createdAt,
+        },
+        {
+            id: 3,
+            label: 'Tên nhân viên lập phiếu',
+            dataIndex: 'employeeName',
+            key: 'employeeName',
+            setValue: (value) => setFilterInventoryCheck({ ...filterInventoryCheck, employeeName: value }),
+            value: filterInventoryCheck.employeeName,
+        },
+    ];
+
+    const selectInput = [
+        {
+            label: 'Trạng thái phiếu',
+            value: filterInventoryCheck.status,
+            option: [
+                {
+                    name: 'Tất cả',
+                    value: 'ALL',
+                },
+                {
+                    name: 'Chờ phê duyệt',
+                    value: 'PENDING',
+                },
+                {
+                    name: 'Đã phê duyệt',
+                    value: 'COMPLETED',
+                },
+                {
+                    name: 'Từ chối',
+                    value: 'REFUSE',
+                },
+            ],
+            setValue: (value) => setFilterInventoryCheck({ ...filterInventoryCheck, status: value }),
+        },
+        {
+            label: 'Kiểm kê thực tế',
+            value: filterInventoryCheck.checkStatus,
+            option: [
+                {
+                    name: 'Tất cả',
+                    value: 'ALL',
+                },
+                {
+                    name: 'Đủ sản phẩm',
+                    value: 'BALANCED',
+                },
+                {
+                    name: 'Chênh lệch',
+                    value: 'DISCREPANCY',
+                },
+            ],
+            setValue: (value) => setFilterInventoryCheck({ ...filterInventoryCheck, checkStatus: value }),
+        },
+    ];
+
+    const handleSubmitFilter = async () => {
+        const warehouse = parseToken('warehouse');
+        const warehouseID = warehouse.warehouseID;
+        let status = '';
+        let checkStatus = '';
+        if (filterInventoryCheck.status === 'ALL') {
+            status = '';
+        } else {
+            status = filterInventoryCheck.status;
+        }
+        if (filterInventoryCheck.checkStatus === 'ALL') {
+            checkStatus = '';
+        } else {
+            checkStatus = filterInventoryCheck.checkStatus;
+        }
+        console.log({
+            ...filterInventoryCheck,
+            warehouseID,
+            currentPage,
+            status,
+            checkStatus,
+        });
+
+        const res = await getFilterInventoryCheck({
+            ...filterInventoryCheck,
+            warehouseID,
+            currentPage,
+            status,
+            checkStatus,
+        });
+
+        if (res?.data?.status == 'OK') {
+            setListInventoryCheck(res.data.data);
+        }
+    };
+
+    const handleResetFilter = () => {
+        setFilterInventoryCheck({
+            inventoryCheckID: '',
+            status: 'ALL',
+            checkStatus: 'ALL',
+            createdAt: '',
+            employeeName: '',
+        });
+        fetchData();
+        setCurrentPage(1);
+    };
 
     return (
-        <div className={cx('wrapper-check')}>
-            <div className={cx('info-check', 'container-check')}>
-                <h4>Thông tin phiếu kiểm kê</h4>
+        <div className={cx('wrapper-import-product')}>
+            <ModelFilter
+                columns={columnsFilter}
+                selectInput={selectInput}
+                handleSubmitFilter={handleSubmitFilter}
+                handleResetFilters={handleResetFilter}
+            >
+                <Button
+                    primary
+                    onClick={() => {
+                        setShowCreateInventoryCheck(true);
+                    }}
+                    leftIcon={<Plus size={16} />}
+                >
+                    <span>Tạo phiếu kiểm kê</span>
+                </Button>
+            </ModelFilter>
 
-                <div className={cx('form-info')}>
-                    <div className={cx('form-group')}>
-                        <label htmlFor="inventoryCheckId">Mã phiếu kiểm kê</label>
-                        <input
-                            type="text"
-                            id="inventoryCheckId"
-                            value={inventoryCheckId}
-                            onChange={(e) => setInventoryCheckId(e.target.value)}
-                            placeholder="Nhập mã phiếu kiểm kê"
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <label htmlFor="inventoryCheckDate">
-                            <span style={{ color: 'red' }}>*</span> Ngày kiểm kê
-                        </label>
-                        <input
-                            type="date"
-                            id="inventoryCheckDate"
-                            value={inventoryCheckDate}
-                            onChange={(e) => setInventoryCheckDate(e.target.value)}
-                            placeholder="Chọn ngày kiểm kê"
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <label htmlFor="staffName">
-                            <span style={{ color: 'red' }}>*</span> Nhân viên phụ trách
-                        </label>
-                        <input
-                            type="text"
-                            id="staffName"
-                            value={staffName}
-                            onChange={(e) => setStaffName(e.target.value)}
-                            placeholder="Nhập tên nhân viên phụ trách kiểm kê"
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <label htmlFor="note">Ghi chú</label>
-                        <input
-                            type="text"
-                            id="note"
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                            placeholder="Nhập ghi chú"
-                        />
-                    </div>
+            <div className={cx('view-list-proposal')}>
+                <div className={cx('table-header')}>
+                    <p className={cx('table-title')}>Danh sách phiếu kiểm kê</p>
                 </div>
-            </div>
 
-            <div className={cx('filter-check', 'container-check')}>
-                <h4>Tìm kiếm sản phẩm cần kiểm kê</h4>
-                <div className={cx('form-group')}>
-                    <label htmlFor="inventoryCheckId">
-                        <span style={{ color: 'red' }}>*</span> Mã phiếu kiểm kê
-                    </label>
-                    <input
-                        type="text"
-                        id="inventoryCheckId"
-                        value={inventoryCheckId}
-                        placeholder="Nhập mã phiếu kiểm kê"
+                <MyTable data={listInventoryCheck} columns={columnsDefineSuggestProposal} />
+                <div className={cx('pagination-table')}>
+                    <PaginationUI
+                        currentPage={currentPage}
+                        handleNextPage={handleNextPage}
+                        handlePrevPage={handlePrevPage}
                     />
                 </div>
             </div>
 
-            <div className={cx('table-check', 'container-check')}>
-                <div className={cx('title-table')}>
-                    <h4>Danh sách hàng hóa kiểm kê</h4>
-                    <Button medium className={cx('btn-complete-check')}>
-                        Hoàn tất kiểm kê
-                    </Button>
-                </div>
-                <MyTable columns={tableColumns} data={[]} />
-            </div>
+            {showDetailInventoryCheck && (
+                <CreateCheckDetail
+                    inventoryCheckDetail={inventoryCheckDetail}
+                    isOpen={showDetailInventoryCheck}
+                    onClose={() => setShowDetailInventoryCheck(false)}
+                    fetchData={fetchData}
+                    type="detail"
+                />
+            )}
+
+            {showCreateInventoryCheck && (
+                <ShowLocationDetail
+                    fetchData={fetchData}
+                    isOpen={true}
+                    onClose={() => setShowCreateInventoryCheck(null)}
+                />
+            )}
         </div>
     );
 };
 
-export default CheckPage;
+export default ImportProduct;

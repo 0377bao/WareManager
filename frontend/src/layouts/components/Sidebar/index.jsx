@@ -31,6 +31,7 @@ import {
     PenLine,
     TruckElectric,
     CheckLine,
+    History,
 } from 'lucide-react';
 import logo from '../../../assets/logo_v2.jpg';
 import { useLocation } from 'react-router-dom';
@@ -156,38 +157,57 @@ const Sidebar = () => {
         },
         {
             id: 2,
-            title: 'Master Data',
-            iconName: Target,
-            subMenu: [
-                {
-                    title: 'Nhóm sản phẩm',
-                    iconName: ShoppingBasket,
-                    path: '/categories',
-                },
-                {
-                    title: 'Sản phẩm',
-                    iconName: Milk,
-                    path: '/products',
-                },
-                {
-                    title: 'Khách hàng',
-                    iconName: Users,
-                    path: '/customer',
-                },
-                {
-                    title: 'Nhà cung cấp',
-                    iconName: Factory,
-                    path: '/supplier',
-                },
-                {
-                    title: 'Nhân sự',
-                    iconName: User,
-                    path: '/auth',
-                },
-            ],
+            title: 'Sản phẩm',
+            iconName: Milk,
+            path: '/products',
+            // subMenu: [
+            //     {
+            //         title: 'Nhóm sản phẩm',
+            //         iconName: ShoppingBasket,
+            //         path: '/categories',
+            //     },
+            //     {
+            //         title: 'Sản phẩm',
+            //         iconName: Milk,
+            //         path: '/products',
+            //     },
+            //     {
+            //         title: 'Khách hàng',
+            //         iconName: Users,
+            //         path: '/customer',
+            //     },
+            //     {
+            //         title: 'Nhà cung cấp',
+            //         iconName: Factory,
+            //         path: '/supplier',
+            //     },
+            //     {
+            //         title: 'Nhân sự',
+            //         iconName: User,
+            //         path: '/auth',
+            //     },
+            // ],
         },
         {
             id: 3,
+            title: 'Khách hàng',
+            iconName: Users,
+            path: '/customer',
+        },
+        {
+            id: 4,
+            title: 'Nhà cung cấp',
+            iconName: Factory,
+            path: '/supplier',
+        },
+        {
+            id: 5,
+            title: 'Nhân sự',
+            iconName: User,
+            path: '/auth',
+        },
+        {
+            id: 6,
             title: 'Phiếu đề xuất',
             iconName: ClipboardMinus,
             subMenu: [
@@ -201,15 +221,15 @@ const Sidebar = () => {
                 //     iconName: PenLine,
                 //     path: '/proposal',
                 // },
-                {
-                    title: 'Phê duyệt',
-                    iconName: CheckLine,
-                    path: '/approve',
-                },
+                // {
+                //     title: 'Phê duyệt',
+                //     iconName: CheckLine,
+                //     path: '/approve',
+                // },
             ],
         },
         {
-            id: 4,
+            id: 7,
             title: 'Quản lý nhập xuất',
             iconName: TruckElectric,
             subMenu: [
@@ -226,7 +246,7 @@ const Sidebar = () => {
             ],
         },
         {
-            id: 5,
+            id: 8,
             title: 'Quản lý kho',
             iconName: Warehouse,
             subMenu: [
@@ -235,16 +255,15 @@ const Sidebar = () => {
                     iconName: CalendarCheck,
                     path: '/check-inventory',
                 },
-
                 {
-                    title: 'Quản lý khu vực',
-                    iconName: Columns3,
-                    path: '/zone',
-                },
-                {
-                    title: 'Quản lý lô hàng',
+                    title: 'Quản lý kệ',
                     iconName: Package,
                     path: '/batch',
+                },
+                {
+                    title: 'Nhật ký kho',
+                    iconName: History,
+                    path: '/history',
                 },
             ],
         },

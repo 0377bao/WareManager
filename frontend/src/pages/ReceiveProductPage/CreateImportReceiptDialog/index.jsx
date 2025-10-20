@@ -170,10 +170,7 @@ const CreateImportReceiptDialog = ({ proposalItem, isOpen, onClose, handleFetchP
         const updateProductList = productListImport.map((item) => ({
             ...item,
             batchID: '',
-            realAmount: '',
-            errorAmount: '',
             reasonError: '',
-            requestAmount: '',
             location: '',
             supplierID: '',
             manufactureDate: '',
@@ -191,7 +188,7 @@ const CreateImportReceiptDialog = ({ proposalItem, isOpen, onClose, handleFetchP
             batchProduct.productName = it.product.productName;
             batchProduct.requestAmount = it.quantity;
             batchProduct.realAmount = it.quantity;
-            batchProduct.errorAmount = 0
+            batchProduct.errorAmount = 0;
             batchProduct.unit = {
                 unitID: it.unit.unitID,
                 unitName: it.unit.unitName,
@@ -304,7 +301,7 @@ const CreateImportReceiptDialog = ({ proposalItem, isOpen, onClose, handleFetchP
                             <table className={cx('table')}>
                                 <thead>
                                     <tr>
-                                        <th>STT</th>
+                                        <th className={cx('stt')}>STT</th>
                                         <th>Mã sản phẩm</th>
                                         <th>Tên sản phẩm</th>
                                         <th>Đơn vị tính</th>
@@ -324,8 +321,8 @@ const CreateImportReceiptDialog = ({ proposalItem, isOpen, onClose, handleFetchP
                                         productListImport.map((it, idx) => {
                                             return (
                                                 <tr key={idx}>
-                                                    <td>{idx + 1}</td>
-                                                    
+                                                    <td className={cx('stt')}>{idx + 1}</td>
+
                                                     <td>
                                                         <input
                                                             type="text"

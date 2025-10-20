@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 import styles from './ProductPage.module.scss';
 import MyTable from '../../components/MyTable';
 import Tippy from '@tippyjs/react';
-import { Eye, PencilIcon } from 'lucide-react';
+import { Eye, PencilIcon, Plus, HistoryIcon } from 'lucide-react';
 import { ProductDetail, ProductEdit, ModelFilter, Button } from '@/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { startLoading, stopLoading } from '../../lib/redux/loading/slice';
@@ -16,6 +16,9 @@ import BatchDTO from '../../dtos/BatchDTO';
 import ProductDetailDTO from '../../dtos/ProductDetailDTO';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { formatStatusProduct, styleMessage } from '../../constants';
+import PaginationUI from '@/components/PaginationUI';
+import ModalProductCreate from '../../components/ModalProductCreate';
+import ProductHistory from '../../components/ProductHistory';
 
 const cx = classNames.bind(styles);
 
@@ -57,6 +60,7 @@ const ProductPage = () => {
     const query = new URLSearchParams(location.search);
     const productID = query.get('productID');
     const dispatch = useDispatch();
+    const [showModalCreateProduct, setShowModalCreateProduct] = useState(false);
 
     const handleOnChange = useCallback((page, pageSize) => {
         setCurrentPage(page);
@@ -80,13 +84,18 @@ const ProductPage = () => {
                     warehouseid: currentUser.warehouseId ? currentUser.warehouseId : null,
                 },
             });
-            console.log(res.data);
             const { batches, ...rest } = res.data.product;
+
             const formatBatch = batches.map((item) => {
                 const batch = new BatchDTO(item);
                 return { ...batch };
             });
-            const productDetail = new ProductDetailDTO({ ...rest, listBatch: formatBatch });
+            const productDetail = new ProductDetailDTO({
+                ...rest,
+                listBatch: formatBatch,
+                baseUnitName: rest.baseUnitProducts?.baseUnitName,
+            });
+            console.log('productDetail', productDetail);
             setProductData(productDetail);
         } catch (err) {
             console.log(err);
@@ -105,6 +114,13 @@ const ProductPage = () => {
         setAction({
             productId,
             actionName: 'edit',
+        });
+    };
+
+    const handleShowHistory = (productId) => {
+        setAction({
+            productId,
+            actionName: 'history',
         });
     };
 
@@ -145,10 +161,17 @@ const ProductPage = () => {
             key: 'productName',
         },
         {
+            title: 'Đơn vị tính',
+            dataIndex: 'unitName',
+            key: 'unitName',
+            render: (text, record) => <p className={cx('unit-name-product')}>{record.baseUnitName}</p>,
+        },
+        {
             title: 'Tồn kho tối thiểu',
             dataIndex: 'minStock',
             key: 'minStock',
             render: (text) => <p className={cx('min-stock-product')}>{text}</p>,
+            width: '15%',
         },
         {
             title: 'Trạng thái',
@@ -179,39 +202,35 @@ const ProductPage = () => {
                                 <PencilIcon size={20} />
                             </button>
                         </Tippy>
+                        <Tippy content={'Lịch sử'} placement="bottom-end">
+                            <button className={cx('action-table-icon')} onClick={() => handleShowHistory(record.sku)}>
+                                <HistoryIcon size={20} />
+                            </button>
+                        </Tippy>
                     </div>
                 );
             },
         },
     ];
 
-    // const handleOpenModalCreateCategory = () => {
-    //     setShowModalCreateCategory((prev) => !prev);
-    // };
-
-    const handleCreateCategory = async (category) => {
-        try {
-            // call api create category
-            // fetch again list category
-        } catch (err) {
-            toast.error(err);
-            return;
-        }
-    };
-
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1) => {
         try {
             const tokenUser = parseToken('tokenUser');
             const result = await request.get('/api/product/list', {
+                params: {
+                    page,
+                },
                 headers: {
                     token: `Beare ${tokenUser.accessToken}`,
                     employeeid: tokenUser.employeeID,
                 },
             });
+            //console.log('fetch', result);
             const formatProducts = result.data.products.map((item) => {
                 const product = new ProductDTO(item);
-                return { ...product };
+                return { ...product, ...item.baseUnitProducts };
             });
+            console.log('fetch', formatProducts);
             setProductList(formatProducts);
         } catch (err) {
             console.log('fetch err', err);
@@ -255,7 +274,6 @@ const ProductPage = () => {
 
     useEffect(() => {
         if (location.state) {
-            console.log(location.state);
             setProductData(location.state);
             setAction({
                 productId: location.state.sku,
@@ -291,23 +309,47 @@ const ProductPage = () => {
         }
     };
 
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage - 1 == 0) return;
+        setCurrentPage(currentPage - 1);
+    };
+
+    useEffect(() => {
+        fetchProducts(currentPage);
+    }, [currentPage]);
+
     return (
         <div className={cx('wrapper-product')}>
             <ModelFilter
                 columns={columnsModelFilter}
                 handleSubmitFilter={handleSearch}
                 handleResetFilters={handleResetFilterProduct}
-            ></ModelFilter>
+            >
+                <Button primary medium onClick={() => setShowModalCreateProduct(true)} leftIcon={<Plus size={20} />}>
+                    <span>Tạo sản phẩm</span>
+                </Button>
+            </ModelFilter>
             <h1>Danh sách sản phẩm</h1>
             <MyTable
                 className={cx('my-table')}
                 columns={tableColumns}
                 data={productList}
-                pageSize={15}
-                pagination
+                //pageSize={5}
+                //pagination
                 onChangePage={handleOnChange}
-                currentPage={currentPage}
+                //currentPage={currentPage}
             />
+            <div className={cx('pagination-wrapper')}>
+                <PaginationUI
+                    currentPage={currentPage}
+                    handleNextPage={handleNextPage}
+                    handlePrevPage={handlePrevPage}
+                />
+            </div>
             {action.productId && action.actionName === 'view' && (
                 <ProductDetail
                     data={productData}
@@ -323,6 +365,19 @@ const ProductPage = () => {
                     data={productData}
                     onClose={() => setAction({ productId: null, actionName: null })}
                     handleUpdateProduct={handleUpdateProduct}
+                />
+            )}
+            {showModalCreateProduct && (
+                <ModalProductCreate
+                    isOpen={!!showModalCreateProduct}
+                    onClose={() => setShowModalCreateProduct(false)}
+                    prefectProductList={fetchProducts}
+                />
+            )}
+            {action.productId && action.actionName === 'history' && (
+                <ProductHistory
+                    data={action.productId}
+                    onClose={() => setAction({ productId: null, actionName: null })}
                 />
             )}
         </div>

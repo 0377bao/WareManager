@@ -14,11 +14,11 @@ export const mapperRole = {
         roleName: 'WARE_MANAGER',
     },
     'Nhân viên xuất hàng': {
-        roleID: 3,
+        roleID: 4,
         roleName: 'STOCK_DISPATCHER',
     },
     'Nhân viên nhận hàng': {
-        roleID: 4,
+        roleID: 3,
         roleName: 'STOCK_RECEIVER',
     },
     'Kế toán': {
@@ -47,8 +47,42 @@ export const formatStatusProposal = {
     REFUSE: 'Từ chối',
 };
 
+export const formatStatusOrderPurchase = {
+    COMPLETED: 'Đã hoàn thành',
+    INCOMPLETE: 'Chưa hoàn thành',
+    CANCELED: 'Đã huỷ',
+};
+
+export const formatTypeOrderPurchase = {
+    NORMAL: 'Phiếu nhập mới',
+    SUPPLEMENT: 'Phiếu bổ sung',
+};
+
 export const formatStatusOrderPurchaseMissing = {
     PENDING: 'Đang xử lý',
     RESOLVED: 'Đã giải quyết',
     CANCELED: 'Đã hủy',
+};
+
+export const formatStatusInventoryCheck = {
+    PENDING: 'Chờ phê duyệt',
+    COMPLETED: 'Đã phê duyệt',
+    REFUSE: 'Từ chối',
+};
+
+export const formatStatusOrderPurchaseMissingInventoryCheck = {
+    BALANCED: 'Đủ sản phẩm',
+    DISCREPANCY: 'Chênh lệch',
+};
+
+export const formatStatusInventoryCheckDetail = {
+    MATCHED: 'Đủ sản phẩm',
+    SHORTAGE: 'Thiếu sản phẩm',
+    SURPLUS: 'Dư sản phẩm',
+};
+
+export const typeTransaction = {
+    PURCHASE: 'Nhập hàng',
+    RELEASE: 'Xuất hàng',
+    INVENTORY_CHECK: 'Kiểm kê hàng',
 };
