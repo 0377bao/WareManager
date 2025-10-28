@@ -260,6 +260,11 @@ const Sidebar = () => {
                     iconName: Package,
                     path: '/batch',
                 },
+                // {
+                //     title: 'Quản lý kệ 3d',
+                //     iconName: Package,
+                //     path: '/warehouse-3d',
+                // },
                 {
                     title: 'Nhật ký kho',
                     iconName: History,

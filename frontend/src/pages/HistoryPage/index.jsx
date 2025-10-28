@@ -6,6 +6,7 @@ import ModelFilter from '../../components/ModelFilter';
 import { filterProductQuantityLog } from '../../services/productquantitylog.service';
 import { typeTransaction } from '../../constants';
 import { convertDateVN } from '../../common';
+import { text } from '@fortawesome/fontawesome-svg-core';
 
 const cx = classNames.bind(styles);
 
@@ -24,55 +25,77 @@ const HistoryPage = () => {
             title: 'Loại giao dịch',
             dataIndex: 'transactionType',
             key: 'transactionType',
-            // width: '20%',
+            width: '10%',
             ellipsis: true,
             render: (_, record) => {
                 return <span>{typeTransaction[record.actionType]}</span>;
             },
         },
         {
+            title: 'Mã SP',
+            dataIndex: 'productCode',
+            width: '7%',
+            key: 'productCode',
+            ellipsis: true,
+            render: (_, record) => {
+                return <span>{record.product.productID}</span>;
+            },
+        },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'productName',
+            key: 'productName',
+            ellipsis: true,
+            render: (_, record) => {
+                return <span>{record.product.productName}</span>;
+            },
+        },
+        {
             title: 'Số lượng trước',
             dataIndex: 'previousAmount',
             key: 'previousAmount',
-            // width: '10%',
+            width: '10%',
             ellipsis: true,
+            align: 'right',
         },
         {
             title: 'Số lượng sau',
             dataIndex: 'newAmount',
             key: 'newAmount',
-            // width: '30%',
+            width: '10%',
             ellipsis: true,
+            align: 'right',
         },
         {
             title: 'Số lượng thay đổi',
             dataIndex: 'quantityChange',
             key: 'quantityChange',
-            // width: '20%',
+            width: '10%',
             ellipsis: true,
+            align: 'right',
         },
         {
             title: 'Mã giao dịch',
             dataIndex: 'referenceID',
             key: 'referenceID',
-            // width: '10%',
+            width: '10%',
             ellipsis: true,
         },
         {
             title: 'Ngày giao dịch',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            // width: '10%',
+            width: '15%',
             ellipsis: true,
             render: (_, record) => {
                 return <span>{convertDateVN(record.createdAt)}</span>;
             },
         },
         {
-            title: 'Người tạo giao dịch',
+            title: 'Người tạo',
             dataIndex: 'employeeCreate',
             key: 'employeeCreate',
-            // width: '10%',
+            width: '10%',
             ellipsis: true,
             render: (index, record) => {
                 let employee = null;
@@ -85,11 +108,6 @@ const HistoryPage = () => {
                 }
                 return <span>{employee?.employeeName}</span>;
             },
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'note',
-            key: 'note',
         },
     ];
 
@@ -168,6 +186,8 @@ const HistoryPage = () => {
         });
 
         if (res.data?.status === 'OK') {
+            console.log('data ', res.data?.data);
+
             setListHistory(res.data?.data || []);
             setTotalPage(res.data?.pagination?.totalPages || 0);
         }
