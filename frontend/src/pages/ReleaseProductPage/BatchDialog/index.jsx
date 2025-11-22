@@ -2,151 +2,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './BatchDialog.module.scss';
 import { Modal } from '@/components';
-import { Button, Input, MyTable } from '../../../components';
+import { Button, Input, MyTable, Select } from '../../../components';
 import InputBase from '../../../components/InputBase';
 import toast from 'react-hot-toast';
 import { styleMessage } from '../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBatchProductList, clearAllBatchProductList } from '../../../lib/redux/batchProduct/BatchProduct';
 import BatchBoxDialog from '../BatchBoxDialog';
-import { getAllBatchWithProductID } from '../../../services/batch.service';
+import { getAllBatchWithProductID, suggestBatchProductForExport } from '../../../services/batch.service';
 import { formatDate } from '../../../utils/formatDate';
+import SuggestBatchExportDialog from '../SuggestBatchExportDialog';
 
 const cx = classNames.bind(styles);
 
-// const mockData = [
-//     {
-//         batchID: 'BA001',
-//         manufactureDate: '2023-10-01',
-//         expiryDate: '2024-10-01',
-//         location: '',
-//         available: 10,
-//         uom: 'Thùng 16',
-//         quantity: 0,
-//     },
-//     {
-//         batchID: 'BA002',
-//         manufactureDate: '2023-10-01',
-//         expiryDate: '2024-10-01',
-//         location: 'Ô 1, kệ A, Tầng 1',
-//         available: 7,
-//         uom: 'Thùng 32',
-//         quantity: 0,
-//     },
-//     {
-//         batchID: 'BA003',
-//         manufactureDate: '2023-10-01',
-//         expiryDate: '2024-10-01',
-//         location: '',
-//         available: 7,
-//         uom: 'Thùng 32',
-//         quantity: 0,
-//     },
-//     {
-//         batchID: 'BA004',
-//         manufactureDate: '2023-10-01',
-//         expiryDate: '2024-10-01',
-//         location: '',
-//         available: 8,
-//         uom: 'Thùng 16',
-//         quantity: 0,
-//     },
-// ];
-
 const BatchDialog = ({ product, isOpen, onClose }) => {
     const [batchProductSelected, setBatchProductSelected] = useState(null);
-    const mockData = [
-        {
-            batchID: 'BA001',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 10,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA002',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 7,
-            uom: 'Thùng 32',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA003',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: '',
-            available: 7,
-            uom: 'Thùng 32',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA004',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: '',
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA005',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: '',
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA006',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA007',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA008',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA009',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-        {
-            batchID: 'BA010',
-            manufactureDate: '2023-10-01',
-            expiryDate: '2024-10-01',
-            location: [],
-            available: 8,
-            uom: 'Thùng 16',
-            quantity: 0,
-        },
-    ];
     const batchOfProductStore = useSelector((state) => state.BatchProductSlice.batchProductList);
     const dispatch = useDispatch();
     const batchOfProductSelected = useMemo(() => {
@@ -160,6 +30,8 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 7;
     const [searchValue, setSearchValue] = useState('');
+    const [isShowSuggestBox, setIsShowSuggestBox] = useState(false);
+    const [selectSuggest, setSelectSuggest] = useState('');
 
     const onChangePage = (page) => {
         setCurrentPage(page);
@@ -176,7 +48,6 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
     };
 
     const updateQuantityBatch = (batchID, quantity) => {
-        console.log(selectedBatch);
         const index = selectedBatch.findIndex((item) => item.batchID === batchID);
         if (index === -1) return;
         const updatedBatch = [...selectedBatch];
@@ -245,7 +116,6 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
             prefetchBatchList(product.productID, batchOfProductSelected);
         } else {
             //setBatchProductList(mockData);
-            console.log('Vào');
             handleFetchBatchList(product.productID);
         }
     }, []);
@@ -333,7 +203,7 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
             render: (_, record) => (
                 <div className={cx('cell-text', 'location-cell')}>
                     <Button
-                        small
+                        medium
                         success
                         rounded
                         disabled={!checkExistBatch(record.batchID) || record.quantity <= 0}
@@ -348,13 +218,6 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
             ),
         },
     ];
-
-    // const tableData = useMemo(() => {
-    //     return batchProductList.map((item, index) => ({
-    //         ...item,
-    //         key: item.batchID || index, // Đảm bảo có key unique
-    //     }));
-    // }, [batchProductList]);
 
     const handleSearchBatch = (batchID) => {
         if (!batchID || batchID.trim() === '') {
@@ -383,18 +246,57 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
         }
     };
 
+    const handleSuggestBatch = async (productID, priority) => {
+        try {
+            const res = await suggestBatchProductForExport(productID, priority);
+            if (res && res.length > 0) {
+                const formatBatch = res.map((it) => ({
+                    batchID: it.batchID,
+                    manufactureDate: it.manufactureDate,
+                    expiryDate: it.expiryDate,
+                    location: it?.location || [],
+                    available: it.remainAmount,
+                    uom: it.unit.unitName,
+                    unitID: it.unit.unitID,
+                    quantity: 0,
+                }));
+                setBatchProductList(formatBatch);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <>
             <Modal isOpenInfo={isOpen} onClose={onClose} showButtonClose={false}>
                 <div className={cx('wrapper-batch-dialog')}>
                     <div className={cx('header-batch-dialog-wrapper')}>
                         <p className={cx('header-batch-dialog')}>Danh sách lô hàng cho sản phẩm</p>
-                        <InputBase
+                        {/* <InputBase
                             placeholder="Tìm kiếm theo mã lô"
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                             onClick={() => handleSearchBatch(searchValue)}
-                        />
+                        /> */}
+                        <div className={cx('group-suggest')}>
+                            <span className={cx('label')}>Sắp xếp</span>
+                            <Select
+                                classNames={cx('custom-select')}
+                                placeholder="Lựa chọn tiêu chí"
+                                options={[
+                                    {
+                                        name: 'Theo hạn sử dụng',
+                                        value: 'expirePriority',
+                                    },
+                                    {
+                                        name: 'Theo thời gian nhập kho',
+                                        value: 'rankPriority',
+                                    },
+                                ]}
+                                onChange={(e) => handleSuggestBatch(product.productID, e.target.value)}
+                            />
+                        </div>
                     </div>
 
                     <MyTable
@@ -448,6 +350,14 @@ const BatchDialog = ({ product, isOpen, onClose }) => {
                     requireQuantity={batchProductSelected.quantity}
                 />
             )}
+            {/* {isShowSuggestBox && (
+                <SuggestBatchExportDialog
+                    isOpen={isShowSuggestBox}
+                    onClose={() => setIsShowSuggestBox(false)}
+                    onSuggest={(priority) => handleSuggestBatch(product.productID, priority)}
+                    onReset={() => handleFetchBatchList(product.productID)}
+                />
+            )} */}
         </>
     );
 };
